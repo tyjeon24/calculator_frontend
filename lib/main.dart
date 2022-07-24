@@ -46,7 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: SafeArea(
         child: DefaultTabController(
           length: bar.length,
-          child:  NestedScrollView(
+          child: NestedScrollView(
             physics: NeverScrollableScrollPhysics(),
             headerSliverBuilder:(BuildContext context, bool innerBoxIsScrolled){
               return <Widget>[
@@ -59,9 +59,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
                 SliverPersistentHeader(
-                  pinned: true,
+                    pinned: true,
                     delegate: TabBarDelegate(bar: bar)
-                )
+                ),
               ];
             },
             body: const TabBarView(
@@ -77,6 +77,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
+
 class TabBarDelegate extends SliverPersistentHeaderDelegate{
 
   const TabBarDelegate({Key? key, required this.bar});
@@ -86,15 +87,18 @@ class TabBarDelegate extends SliverPersistentHeaderDelegate{
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
     // TODO: implement build
-    return Container(
-      child: TabBar(
+    return ConstrainedBox(
+        constraints: const BoxConstraints(
+          maxWidth: 100
+        ),
+      child:  TabBar(
         tabs: bar.map(
                 (e) => Tab(
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    child: Text(e),
-                  ),
-                )
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Text(e),
+              ),
+            )
         ).toList(),
         indicatorWeight: 2,
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
