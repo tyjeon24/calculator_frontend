@@ -1,5 +1,6 @@
 import 'package:calculator_frontend/CapitalGainsTax.dart';
 import 'package:calculator_frontend/HoldingTax.dart';
+import 'package:calculator_frontend/widgets/LargeText.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -31,7 +32,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   @override
   void initState() {
     // TODO: implement initState
@@ -39,6 +39,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   final List<String> bar = ["양도소득세", "보유세"];
+  final mainColor = 0xff80cfd5;
 
   @override
   Widget build(BuildContext context) {
@@ -48,27 +49,25 @@ class _MyHomePageState extends State<MyHomePage> {
           length: bar.length,
           child: NestedScrollView(
             physics: NeverScrollableScrollPhysics(),
-            headerSliverBuilder:(BuildContext context, bool innerBoxIsScrolled){
+            headerSliverBuilder:
+                (BuildContext context, bool innerBoxIsScrolled) {
               return <Widget>[
-                const SliverAppBar(
-                  pinned: false,
-                  backgroundColor: Colors.white,
-                  title: Text(
-                    "세금 계산기",
-                    style: TextStyle(color: Colors.black),
-                  ),
-                ),
+                SliverAppBar(
+                    expandedHeight: 90,
+                    pinned: false,
+                    backgroundColor: Color(mainColor),
+                    title: Padding(
+                      padding: const EdgeInsets.only(top: 20, left: 15),
+                      child: LargeText(text: '세금 계산기'),
+                    )),
                 SliverPersistentHeader(
-                    pinned: true,
-                    delegate: TabBarDelegate(bar: bar)
-                ),
+
+                    pinned: true, delegate: TabBarDelegate(bar: bar))
+
               ];
             },
             body: const TabBarView(
-              children: [
-                CapitalGainsTaxPage(),
-                HoldingTaxPage()
-              ],
+              children: [CapitalGainsTaxPage(), HoldingTaxPage()],
             ),
           ),
         ),
@@ -77,29 +76,26 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-
-class TabBarDelegate extends SliverPersistentHeaderDelegate{
-
+class TabBarDelegate extends SliverPersistentHeaderDelegate {
   const TabBarDelegate({Key? key, required this.bar});
 
   final List<String> bar;
 
   @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
     // TODO: implement build
-    return ConstrainedBox(
-        constraints: const BoxConstraints(
-          maxWidth: 100
-        ),
-      child:  TabBar(
-        tabs: bar.map(
-                (e) => Tab(
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: Text(e),
-              ),
-            )
-        ).toList(),
+    return Container(
+      child: TabBar(
+        tabs: bar
+            .map((e) => Tab(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: Text(e),
+                  ),
+                ))
+            .toList(),
+
         indicatorWeight: 2,
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         unselectedLabelColor: Colors.grey,
@@ -109,8 +105,6 @@ class TabBarDelegate extends SliverPersistentHeaderDelegate{
       ),
     );
   }
-
-
 
   @override
   double get maxExtent => 48;
