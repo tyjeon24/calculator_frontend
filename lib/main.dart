@@ -61,7 +61,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: LargeText(text: '세금 계산기'),
                     )),
                 SliverPersistentHeader(
+
                     pinned: true, delegate: TabBarDelegate(bar: bar))
+
               ];
             },
             body: const TabBarView(
@@ -93,6 +95,7 @@ class TabBarDelegate extends SliverPersistentHeaderDelegate {
                   ),
                 ))
             .toList(),
+
         indicatorWeight: 2,
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         unselectedLabelColor: Colors.grey,
