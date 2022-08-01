@@ -53,21 +53,24 @@ class _MyHomePageState extends State<MyHomePage> {
                 (BuildContext context, bool innerBoxIsScrolled) {
               return <Widget>[
                 SliverAppBar(
-                    expandedHeight: 90,
+                    toolbarHeight: 60,
+                    expandedHeight: 70,
+                    floating: true,
                     pinned: false,
                     backgroundColor: Color(mainColor),
                     title: Padding(
-                      padding: const EdgeInsets.only(top: 20, left: 15),
-                      child: LargeText(text: '세금 계산기'),
+                      padding: const EdgeInsets.only(left: 30),
+                      child: LargeText(
+                        text: '세금 계산기',
+                        color: Colors.white,
+                      ),
                     )),
                 SliverPersistentHeader(
-
                     pinned: true, delegate: TabBarDelegate(bar: bar))
-
               ];
             },
             body: const TabBarView(
-              children: [CapitalGainsTaxPage(), HoldingTaxPage()],
+              children: [HoldingTaxPage(), CapitalGainsTaxPage()],
             ),
           ),
         ),
@@ -89,13 +92,12 @@ class TabBarDelegate extends SliverPersistentHeaderDelegate {
       child: TabBar(
         tabs: bar
             .map((e) => Tab(
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    child: Text(e),
-                  ),
-                ))
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Text(e),
+          ),
+        ))
             .toList(),
-
         indicatorWeight: 2,
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         unselectedLabelColor: Colors.grey,
@@ -115,3 +117,4 @@ class TabBarDelegate extends SliverPersistentHeaderDelegate {
   @override
   bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) => true;
 }
+
