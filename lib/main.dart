@@ -92,11 +92,11 @@ class TabBarDelegate extends SliverPersistentHeaderDelegate {
       child: TabBar(
         tabs: bar
             .map((e) => Tab(
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    child: Text(e),
-                  ),
-                ))
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Text(e),
+          ),
+        ))
             .toList(),
         indicatorWeight: 2,
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -117,3 +117,4 @@ class TabBarDelegate extends SliverPersistentHeaderDelegate {
   @override
   bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) => true;
 }
+
