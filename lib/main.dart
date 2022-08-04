@@ -22,8 +22,8 @@ class MyApp extends StatelessWidget {
       ),
       home: const MyHomePage(title: 'TAXAI Home Page'),
       routes: {
-        '/row1col1': (context) => CapitalGainsTaxPage(),
-        '/row1col2': (context) => HoldingTaxPage()
+        '/capgain': (context) => CapitalGainsTaxPage(),
+        '/holding': (context) => HoldingTaxPage()
       },
     );
   }
@@ -69,15 +69,15 @@ class _MyHomePageState extends State<MyHomePage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   NavigationBox(
-                      pushNamed: '/row1col1',
+                      pushNamed: '/capgain',
                       title_1: '양도소득세',
                       title_2: 'AI 판단 계산기'),
                   NavigationBox(
-                      pushNamed: '/row1col2',
+                      pushNamed: '/holding',
                       title_1: '보유세(종부세, 재산세)',
                       title_2: 'AI 판단 계산기'),
                   NavigationBox(
-                    pushNamed: '/row1col1',
+                    pushNamed: '/capgain',
                     title_1: '',
                     title_2: '',
                     iconColor: Colors.transparent,
@@ -85,7 +85,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     boxColor: Colors.transparent,
                   ),
                   NavigationBox(
-                    pushNamed: '/row1col1',
+                    pushNamed: '/capgain',
                     title_1: '',
                     title_2: '',
                     iconColor: Colors.transparent,
@@ -107,19 +107,19 @@ class _MyHomePageState extends State<MyHomePage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   NavigationBox(
-                      pushNamed: '/row1col1',
+                      pushNamed: '/capgain',
                       title_1: '양도소득세 AI',
                       title_2: '컨설팅'),
                   NavigationBox(
-                      pushNamed: '/row1col1',
+                      pushNamed: '/capgain',
                       title_1: '매도 관련',
                       title_2: 'AI 컨설팅'),
                   NavigationBox(
-                      pushNamed: '/row1col1',
+                      pushNamed: '/capgain',
                       title_1: '매입 관련',
                       title_2: 'AI 컨설팅'),
                   NavigationBox(
-                      pushNamed: '/row1col1',
+                      pushNamed: '/capgain',
                       title_1: '증여 관련',
                       title_2: 'AI 컨설팅')
                 ],
