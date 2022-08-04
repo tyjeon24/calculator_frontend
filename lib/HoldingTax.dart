@@ -79,218 +79,218 @@ class _HoldingTaxPageState extends State<HoldingTaxPage>
       backgroundColor: Colors.grey[100],
       body: SafeArea(
           child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(
-                maxWidth: 1200,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(
+            maxWidth: 1200,
+          ),
+          child: ListView(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 30, top: 40, bottom: 20),
+                child: LargeText(
+                  text: '보유세 통합 계산',
+                  size: 25,
+                ),
               ),
-              child: ListView(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 30, top: 40, bottom: 20),
-                    child: LargeText(
-                      text: '보유세 통합 계산',
-                      size: 25,
+              Top_Container(context),
+              const SizedBox(
+                height: 70,
+              ),
+              Diver_Title(),
+              const SizedBox(
+                height: 20,
+              ),
+              Year(),
+              const SizedBox(
+                height: 30,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 30, right: 30),
+                child: Row(
+                  children: [
+                    MediumText(text: '기본정보'),
+                    const SizedBox(
+                      width: 70,
                     ),
-                  ),
-                  Top_Container(context),
-                  const SizedBox(
-                    height: 70,
-                  ),
-                  Diver_Title(),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Year(),
-                  const SizedBox(
-                    height: 30,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 30, right: 30),
-                    child: Row(
-                      children: [
-                        MediumText(text: '기본정보'),
-                        const SizedBox(
-                          width: 70,
-                        ),
-                        checkBox(),
-                        _optionText('1세대 1주택'),
-                        const SizedBox(
-                          width: 20,
-                        ),
-                        checkBox(),
-                        _optionText('1세대 1주택자'),
-                      ],
+                    checkBox(),
+                    _optionText('1세대 1주택'),
+                    const SizedBox(
+                      width: 20,
                     ),
-                  ),
-                  const SizedBox(
-                    height: 30,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 30, right: 30),
-                    child: Row(
-                      children: [
-                        MediumText(text: '세액공제'),
-                        const SizedBox(
-                          width: 70,
-                        ),
-                        checkBox(),
-                        _optionText('연령공제'),
-                        const SizedBox(
-                          width: 20,
-                        ),
-                        checkBox(),
-                        _optionText('보유기간공제'),
-                      ],
+                    checkBox(),
+                    _optionText('1세대 1주택자'),
+                  ],
+                ),
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 30, right: 30),
+                child: Row(
+                  children: [
+                    MediumText(text: '세액공제'),
+                    const SizedBox(
+                      width: 70,
                     ),
-                  ),
-                  const SizedBox(
-                    height: 30,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 30, right: 30),
-                    child: Row(
-                      children: [
-                        MediumText(text: '세부계산'),
-                        const SizedBox(
-                          width: 70,
-                        ),
-                        checkBox(),
-                        _optionText('세부담 상한 반영'),
-                      ],
+                    checkBox(),
+                    _optionText('연령공제'),
+                    const SizedBox(
+                      width: 20,
                     ),
-                  ),
-                  const SizedBox(
-                    height: 50,
-                  ),
-                  Divider_Title2(),
-                  const SizedBox(
-                    height: 30,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 30, right: 30),
-                    child: Row(
-                      children: [
-                        MediumText(text: '추가사항'),
-                        const SizedBox(
-                          width: 70,
-                        ),
-                        checkBox(),
-                        _optionText('조정대상지역'),
-                        const SizedBox(
-                          width: 20,
-                        ),
-                        checkBox(),
-                        _optionText('도시지역분 포함'),
-                        const SizedBox(
-                          width: 20,
-                        ),
-                        checkBox(),
-                        _optionText('공동명의'),
-                        const SizedBox(
-                          width: 20,
-                        ),
-                        checkBox(),
-                        _optionText('세부계산'),
-                      ],
+                    checkBox(),
+                    _optionText('보유기간공제'),
+                  ],
+                ),
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 30, right: 30),
+                child: Row(
+                  children: [
+                    MediumText(text: '세부계산'),
+                    const SizedBox(
+                      width: 70,
                     ),
-                  ),
-                  const SizedBox(
-                    height: 30,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 30, right: 30),
-                    child: Expanded(
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          MediumText(text: '공시가격'),
-                          const SizedBox(
-                            width: 70,
-                          ),
-                          Expanded(
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                ),
-                                child: TextField(
-                                  keyboardType: TextInputType.number,
-                                  focusNode: _focusNode,
-                                  controller: _amountController,
-                                  cursorColor: Colors.black,
-                                  textInputAction: TextInputAction.search,
-                                  style: const TextStyle(fontSize: 17),
-                                  decoration: InputDecoration(
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(color: Colors.transparent),
-                                    ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(color: Colors.transparent),
-                                    ),
-                                    contentPadding: EdgeInsets.only(
-                                        left: 15, right: 10, top: 10, bottom: 10),
-                                    hintText: '금액 입력',
-                                    hintStyle: const TextStyle(color: Colors.black38),
-                                  ),
-                                ),
-                              )),
-                        ],
+                    checkBox(),
+                    _optionText('세부담 상한 반영'),
+                  ],
+                ),
+              ),
+              const SizedBox(
+                height: 50,
+              ),
+              Divider_Title2(),
+              const SizedBox(
+                height: 30,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 30, right: 30),
+                child: Row(
+                  children: [
+                    MediumText(text: '추가사항'),
+                    const SizedBox(
+                      width: 70,
+                    ),
+                    checkBox(),
+                    _optionText('조정대상지역'),
+                    const SizedBox(
+                      width: 20,
+                    ),
+                    checkBox(),
+                    _optionText('도시지역분 포함'),
+                    const SizedBox(
+                      width: 20,
+                    ),
+                    checkBox(),
+                    _optionText('공동명의'),
+                    const SizedBox(
+                      width: 20,
+                    ),
+                    checkBox(),
+                    _optionText('세부계산'),
+                  ],
+                ),
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 30, right: 30),
+                child: Expanded(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      MediumText(text: '공시가격'),
+                      const SizedBox(
+                        width: 70,
                       ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 30,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 30, right: 30),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        MediumText(text: '자산추가'),
-                        const SizedBox(
-                          width: 70,
-                        ),
-                        Expanded(
+                      Expanded(
                           child: Container(
-                              margin: const EdgeInsets.only(top: 5, bottom: 5),
-                              height: 40,
-                              decoration:
-                              const BoxDecoration(color: Colors.black38),
-                              child: InkWell(
-                                onTap: () {},
-                                child: Center(
-                                  child: Text(
-                                    '주택',
-                                    style: const TextStyle(
-                                        color: Colors.white, fontSize: 17),
-                                  ),
-                                ),
-                              )),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
                         ),
-                      ],
-                    ),
+                        child: TextField(
+                          keyboardType: TextInputType.number,
+                          focusNode: _focusNode,
+                          controller: _amountController,
+                          cursorColor: Colors.black,
+                          textInputAction: TextInputAction.search,
+                          style: const TextStyle(fontSize: 17),
+                          decoration: InputDecoration(
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.transparent),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.transparent),
+                            ),
+                            contentPadding: EdgeInsets.only(
+                                left: 15, right: 10, top: 10, bottom: 10),
+                            hintText: '금액 입력',
+                            hintStyle: const TextStyle(color: Colors.black38),
+                          ),
+                        ),
+                      )),
+                    ],
                   ),
-                  const SizedBox(
-                    height: 50,
-                  ),
-                  Container(
-                    height: 50,
-                    margin: const EdgeInsets.all(5),
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(primary: Colors.redAccent),
-                      onPressed: () {},
-                      child: const Text(
-                        '계산',
-                        style: TextStyle(fontSize: 20),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 100,
-                  )
-                ],
+                ),
               ),
-            ),
-          )),
+              const SizedBox(
+                height: 30,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 30, right: 30),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    MediumText(text: '자산추가'),
+                    const SizedBox(
+                      width: 70,
+                    ),
+                    Expanded(
+                      child: Container(
+                          margin: const EdgeInsets.only(top: 5, bottom: 5),
+                          height: 40,
+                          decoration:
+                              const BoxDecoration(color: Colors.black38),
+                          child: InkWell(
+                            onTap: () {},
+                            child: Center(
+                              child: Text(
+                                '주택',
+                                style: const TextStyle(
+                                    color: Colors.white, fontSize: 17),
+                              ),
+                            ),
+                          )),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(
+                height: 50,
+              ),
+              Container(
+                height: 50,
+                margin: const EdgeInsets.all(5),
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(primary: Colors.redAccent),
+                  onPressed: () {},
+                  child: const Text(
+                    '계산',
+                    style: TextStyle(fontSize: 20),
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 100,
+              )
+            ],
+          ),
+        ),
+      )),
     );
   }
 
@@ -298,7 +298,7 @@ class _HoldingTaxPageState extends State<HoldingTaxPage>
     return Padding(
       padding: const EdgeInsets.only(left: 30, right: 30),
       child:
-      Row(crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
+          Row(crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
         Padding(
           padding: const EdgeInsets.only(right: 3),
           child: Icon(
@@ -425,7 +425,7 @@ class _HoldingTaxPageState extends State<HoldingTaxPage>
                   indicatorColor: Colors.black,
                   indicatorSize: TabBarIndicatorSize.label,
                   labelStyle:
-                  TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   controller: _tabController,
                   tabs: bar.map((_title) {
                     return Tab(
@@ -450,13 +450,13 @@ class _HoldingTaxPageState extends State<HoldingTaxPage>
                 },
                 icon: _expand
                     ? Icon(
-                  Icons.keyboard_arrow_up_sharp,
-                  size: 40,
-                )
+                        Icons.keyboard_arrow_up_sharp,
+                        size: 40,
+                      )
                     : Icon(
-                  Icons.keyboard_arrow_down_sharp,
-                  size: 40,
-                ))
+                        Icons.keyboard_arrow_down_sharp,
+                        size: 40,
+                      ))
           ],
         ),
       ),
@@ -523,4 +523,5 @@ class _HoldingTaxPageState extends State<HoldingTaxPage>
       ),
     );
   }
+
 }
