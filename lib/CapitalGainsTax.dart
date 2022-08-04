@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:calculator_frontend/widgets/LargeText.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
@@ -16,11 +17,14 @@ class _CapitalGainsTaxPageState extends State<CapitalGainsTaxPage> {
 
   final mainColor = 0xff80cfd5;
 
+  final LayerLink _layerLink = LayerLink();
+
   bool _ischecked = false;
   bool _isSearchedAddress = false; //flase 이면 주소 검색을 아직 안한 상태, 1이면 검색을 한 상태
 
   String sampleAddress = '서울특별시 서초구 반포대로 4(서초동)';
-  Color color = Colors.black38;
+  Color _color = Colors.black38;
+  final tempColor = 0xfffafafa;
 
   final TextEditingController _transferPriceTC = TextEditingController();
   final TextEditingController _acquisitionPriceTC = TextEditingController();
@@ -31,12 +35,12 @@ class _CapitalGainsTaxPageState extends State<CapitalGainsTaxPage> {
   final TextEditingController _endLivingDateTC = TextEditingController();
   final TextEditingController _findingAddressTC = TextEditingController();
 
-  List<String> _typeOfTransfer = ["주택(주거용 오피스텔 포함)", "입주권", "분양권"];
+  final List<String> _typeOfTransfer = ["주택(주거용 오피스텔 포함)", "입주권", "분양권"];
   String _dropDownMenuForTypeOfTransfer = "주택(주거용 오피스텔 포함)";
-  List<String> _typeOfAcquisition = ["주택", "재건축전 주택", "주거용 오피스텔", "조합원 입주권", "분양권(2021년 이전 취득)", "분양권(2022년 이후 취득)"];
-  List<String> _reasonOfAquistition = ["매매", "증여", "상속", "자가신축"];
-
-
+  final List<String> _typeOfAcquisition = ["주택", "재건축전 주택", "주거용 오피스텔", "조합원 입주권", "분양권(2021년 이전 취득)", "분양권(2022년 이후 취득)"];
+  String _dropDownMenuForTypeOfAcquisition = "주택";
+  final List<String> _reasonOfAquistition = ["매매", "증여", "상속", "자가신축"];
+  String _dropDownMenuForReasonOfAquistition = "매매";
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +64,7 @@ class _CapitalGainsTaxPageState extends State<CapitalGainsTaxPage> {
 
                           setState(() {
                             sampleAddress = a!;
-                            color = Colors.black;
+                            _color = Colors.black;
                           });
                         },
                         child: Container(
@@ -79,7 +83,7 @@ class _CapitalGainsTaxPageState extends State<CapitalGainsTaxPage> {
                               children:  [
                                 Text(
                                   sampleAddress,
-                                  style:  TextStyle(fontSize: 17,color: color),
+                                  style:  TextStyle(fontSize: 17,color: _color),
                                 ),
                               ],
                             )
@@ -91,71 +95,194 @@ class _CapitalGainsTaxPageState extends State<CapitalGainsTaxPage> {
                 Row(
                   children: [
                     _smallTitle('양도시 종류'),
-                    DropdownButton(
-                      // Initial Value
-                      value: _dropDownMenuForTypeOfTransfer,
-                      // Down Arrow Icon
-                      icon: const Icon(Icons.keyboard_arrow_down),
-                      // Array list of items
-                      items: _typeOfTransfer.map((String items) {
-                        return DropdownMenuItem(
-                          value: items,
-                          child: Text(items),
-                        );
-                      }).toList(),
-                      // After selecting the desired option,it will
-                      // change button value to selected value
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          _dropDownMenuForTypeOfTransfer = newValue!;
-                        });
-                      },
+                    Expanded(
+                        child: Container(
+                          margin: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                          child: LayoutBuilder(
+                            builder: (BuildContext context, BoxConstraints constraints){
+                              return DropdownButtonHideUnderline(
+                                child: DropdownButton2(
+                                  isExpanded: true,
+                                  items: _typeOfTransfer
+                                      .map((item) => DropdownMenuItem<String>(
+                                    value: item,
+                                    child: Text(
+                                      item,
+                                      style: const TextStyle(
+                                        fontSize: 17,
+                                        //color: Colors.white,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  )).toList(),
+                                  value: _dropDownMenuForTypeOfTransfer,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _dropDownMenuForTypeOfTransfer = value as String;
+                                    });
+                                  },
+                                  icon: const Icon(
+                                    Icons.keyboard_arrow_down,
+                                  ),
+                                  iconSize: 30,
+                                  buttonHeight: 50,
+                                  buttonPadding: const EdgeInsets.only(left: 14, right: 14),
+                                  buttonDecoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(14),
+                                    border: Border.all(),
+                                    color: Color(tempColor),
+                                  ),
+                                  buttonElevation: 2,
+                                  itemHeight: 40,
+                                  itemPadding: const EdgeInsets.only(left: 14, right: 14),
+                                  dropdownMaxHeight: 200,
+                                  dropdownWidth: constraints.maxWidth,
+                                  dropdownPadding: null,
+                                  dropdownDecoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(14),
+                                    // color: Colors.redAccent,
+                                  ),
+                                  dropdownElevation: 8,
+                                  scrollbarRadius: const Radius.circular(40),
+                                  scrollbarThickness: 6,
+                                  scrollbarAlwaysShow: true,
+                                  offset: const Offset(0, 0),
+                                ),
+                              );
+                            },
+                          ),
+                        )
                     ),
                   ],
-
-                ),
-                const Text(
-                  '거주정보',
-                  style: TextStyle(fontSize: 17),
-                ),
-                Expanded(
-                  child: Container(
-                      margin: const EdgeInsets.only(left: 10.0, right: 10.0),
-                      child: const Divider(
-                        color: Colors.black,
-                        height: 50,
-                      )),
                 ),
                 Row(
                   children: [
-                    _smallTitle('간편선택'),
-                    Checkbox(
-                        value: _ischecked,
-                        onChanged: (bool? value) {
-                          setState(() {
-                            _ischecked = value!;
-                          });
-                        }),
-                    _optionText('보유기간과 동일'),
-                    Checkbox(
-                        value: _ischecked,
-                        onChanged: (bool? value) {
-                          setState(() {
-                            _ischecked = value!;
-                          });
-                        }),
-                    _optionText('거주기간 없음'),
+                    _smallTitle('양도예정일'),
+                    _textField2(_transferDateTC, '20220725')
                   ],
                 ),
                 Row(
                   children: [
-                    _smallTitle('취득일자'),
-                    _textField2(_startLivingDateTC, '19980218'),
-                    const Padding(
-                      padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                      child: Icon(Icons.arrow_forward_rounded),
+                    _smallTitle('취득 원인'),
+                    Expanded(
+                        child: Container(
+                          margin: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                          child: LayoutBuilder(
+                            builder: (BuildContext context, BoxConstraints constraints){
+                              return DropdownButtonHideUnderline(
+                                child: DropdownButton2(
+                                  isExpanded: true,
+                                  items: _reasonOfAquistition
+                                      .map((item) => DropdownMenuItem<String>(
+                                    value: item,
+                                    child: Text(
+                                      item,
+                                      style: const TextStyle(
+                                        fontSize: 17,
+                                        //color: Colors.white,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  )).toList(),
+                                  value: _dropDownMenuForReasonOfAquistition,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _dropDownMenuForReasonOfAquistition = value as String;
+                                    });
+                                  },
+                                  icon: const Icon(
+                                    Icons.keyboard_arrow_down,
+                                  ),
+                                  iconSize: 30,
+                                  buttonHeight: 50,
+                                  buttonPadding: const EdgeInsets.only(left: 14, right: 14),
+                                  buttonDecoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(14),
+                                    border: Border.all(),
+                                    color: Color(tempColor),
+                                  ),
+                                  buttonElevation: 2,
+                                  itemHeight: 40,
+                                  itemPadding: const EdgeInsets.only(left: 14, right: 14),
+                                  dropdownMaxHeight: 200,
+                                  dropdownWidth: constraints.maxWidth,
+                                  dropdownPadding: null,
+                                  dropdownDecoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(14),
+                                    // color: Colors.redAccent,
+                                  ),
+                                  dropdownElevation: 8,
+                                  scrollbarRadius: const Radius.circular(40),
+                                  scrollbarThickness: 6,
+                                  scrollbarAlwaysShow: true,
+                                  offset: const Offset(0, 0),
+                                ),
+                              );
+                            },
+                          ),
+                        )
                     ),
-                    _textField2(_endLivingDateTC, '20220725'),
+                  ],
+                ),
+                Row(
+                  children: [
+                    _smallTitle('취득시 종류'),
+                    Expanded(child: Container(
+                      margin: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                      child: LayoutBuilder(
+                        builder: (BuildContext context, BoxConstraints constraints){
+                          return DropdownButtonHideUnderline(
+                            child: DropdownButton2(
+                              isExpanded: true,
+                              items: _typeOfAcquisition
+                                  .map((item) => DropdownMenuItem<String>(
+                                value: item,
+                                child: Text(
+                                  item,
+                                  style: const TextStyle(
+                                    fontSize: 17,
+                                    //color: Colors.white,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              )).toList(),
+                              value: _dropDownMenuForTypeOfAcquisition,
+                              onChanged: (value) {
+                                setState(() {
+                                  _dropDownMenuForTypeOfAcquisition = value as String;
+                                });
+                              },
+                              icon: const Icon(
+                                Icons.keyboard_arrow_down,
+                              ),
+                              iconSize: 30,
+                              buttonHeight: 50,
+                              buttonPadding: const EdgeInsets.only(left: 14, right: 14),
+                              buttonDecoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(14),
+                                border: Border.all(),
+                                color: Color(tempColor),
+                              ),
+                              buttonElevation: 2,
+                              itemHeight: 40,
+                              itemPadding: const EdgeInsets.only(left: 14, right: 14),
+                              dropdownMaxHeight: 200,
+                              dropdownWidth: constraints.maxWidth,
+                              dropdownPadding: null,
+                              dropdownDecoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(14),
+                                // color: Colors.redAccent,
+                              ),
+                              dropdownElevation: 8,
+                              scrollbarRadius: const Radius.circular(40),
+                              scrollbarThickness: 6,
+                              scrollbarAlwaysShow: true,
+                              offset: const Offset(0, 0),
+                            ),
+                          );
+                        },
+                      ),
+                    ))
                   ],
                 ),
                 Container(
@@ -179,6 +306,65 @@ class _CapitalGainsTaxPageState extends State<CapitalGainsTaxPage> {
               ],
             ),
         ),
+      ),
+    );
+  }
+
+  Widget _customDropdown(List<String> listofItems, String selected){
+    return Container(
+      margin: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+      child: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints){
+          return DropdownButtonHideUnderline(
+            child: DropdownButton2(
+              isExpanded: true,
+              items: listofItems
+                  .map((item) => DropdownMenuItem<String>(
+                value: item,
+                child: Text(
+                  item,
+                  style: const TextStyle(
+                    fontSize: 17,
+                    //color: Colors.white,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              )).toList(),
+              value: selected,
+              onChanged: (value) {
+                setState(() {
+                  selected = value as String;
+                });
+              },
+              icon: const Icon(
+                Icons.keyboard_arrow_down,
+              ),
+              iconSize: 30,
+              buttonHeight: 50,
+              buttonPadding: const EdgeInsets.only(left: 14, right: 14),
+              buttonDecoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(),
+                color: Colors.white,
+              ),
+              buttonElevation: 2,
+              itemHeight: 40,
+              itemPadding: const EdgeInsets.only(left: 14, right: 14),
+              dropdownMaxHeight: 200,
+              dropdownWidth: constraints.maxWidth,
+              dropdownPadding: null,
+              dropdownDecoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(14),
+                // color: Colors.redAccent,
+              ),
+              dropdownElevation: 8,
+              scrollbarRadius: const Radius.circular(40),
+              scrollbarThickness: 6,
+              scrollbarAlwaysShow: true,
+              offset: const Offset(0, 0),
+            ),
+          );
+        },
       ),
     );
   }

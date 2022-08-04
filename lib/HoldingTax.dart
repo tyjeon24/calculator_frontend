@@ -25,7 +25,17 @@ class _HoldingTaxPageState extends State<HoldingTaxPage>
   final mainColor_grey = 0xff666666;
   final bar = ['설명', '주의사항'];
   bool _expand = false;
-  bool _isChecked = false;
+
+  bool _isChecked1 = false;
+  bool _isChecked2 = false;
+  bool _isChecked3 = false;
+  bool _isChecked4 = false;
+  bool _isChecked5 = false;
+  bool _isChecked6 = false;
+  bool _isChecked7 = false;
+  bool _isChecked8 = false;
+  bool _isChecked9 = false;
+
   final years = ['2021년', '2022년', '2023년']; //대상연도
   late List<bool> _isSelected;
 
@@ -112,12 +122,34 @@ class _HoldingTaxPageState extends State<HoldingTaxPage>
                     const SizedBox(
                       width: 70,
                     ),
-                    checkBox(),
+                    Checkbox(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(35),
+                        ),
+                        side: BorderSide(width: 1, color: Color(mainColor)),
+                        checkColor: Colors.white,
+                        value: _isChecked1,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            _isChecked1 = value!;
+                          });
+                        }),
                     _optionText('1세대 1주택'),
                     const SizedBox(
                       width: 20,
                     ),
-                    checkBox(),
+                    Checkbox(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(35),
+                        ),
+                        side: BorderSide(width: 1, color: Color(mainColor)),
+                        checkColor: Colors.white,
+                        value: _isChecked2,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            _isChecked2 = value!;
+                          });
+                        }),
                     _optionText('1세대 1주택자'),
                   ],
                 ),
@@ -133,12 +165,34 @@ class _HoldingTaxPageState extends State<HoldingTaxPage>
                     const SizedBox(
                       width: 70,
                     ),
-                    checkBox(),
+                    Checkbox(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(35),
+                        ),
+                        side: BorderSide(width: 1, color: Color(mainColor)),
+                        checkColor: Colors.white,
+                        value: _isChecked3,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            _isChecked3 = value!;
+                          });
+                        }),
                     _optionText('연령공제'),
                     const SizedBox(
                       width: 20,
                     ),
-                    checkBox(),
+                    Checkbox(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(35),
+                        ),
+                        side: BorderSide(width: 1, color: Color(mainColor)),
+                        checkColor: Colors.white,
+                        value: _isChecked4,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            _isChecked4 = value!;
+                          });
+                        }),
                     _optionText('보유기간공제'),
                   ],
                 ),
@@ -154,7 +208,18 @@ class _HoldingTaxPageState extends State<HoldingTaxPage>
                     const SizedBox(
                       width: 70,
                     ),
-                    checkBox(),
+                    Checkbox(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(35),
+                        ),
+                        side: BorderSide(width: 1, color: Color(mainColor)),
+                        checkColor: Colors.white,
+                        value: _isChecked5,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            _isChecked5 = value!;
+                          });
+                        }),
                     _optionText('세부담 상한 반영'),
                   ],
                 ),
@@ -174,22 +239,66 @@ class _HoldingTaxPageState extends State<HoldingTaxPage>
                     const SizedBox(
                       width: 70,
                     ),
-                    checkBox(),
+                    Checkbox(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(35),
+                        ),
+                        side: BorderSide(width: 1, color: Color(mainColor)),
+                        checkColor: Colors.white,
+                        value: _isChecked6,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            _isChecked6 = value!;
+                          });
+                        }),
                     _optionText('조정대상지역'),
                     const SizedBox(
                       width: 20,
                     ),
-                    checkBox(),
+                    Checkbox(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(35),
+                        ),
+                        side: BorderSide(width: 1, color: Color(mainColor)),
+                        checkColor: Colors.white,
+                        value: _isChecked7,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            _isChecked7 = value!;
+                          });
+                        }),
                     _optionText('도시지역분 포함'),
                     const SizedBox(
                       width: 20,
                     ),
-                    checkBox(),
+                    Checkbox(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(35),
+                        ),
+                        side: BorderSide(width: 1, color: Color(mainColor)),
+                        checkColor: Colors.white,
+                        value: _isChecked8,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            _isChecked8 = value!;
+                          });
+                        }),
                     _optionText('공동명의'),
                     const SizedBox(
                       width: 20,
                     ),
-                    checkBox(),
+                    Checkbox(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(35),
+                        ),
+                        side: BorderSide(width: 1, color: Color(mainColor)),
+                        checkColor: Colors.white,
+                        value: _isChecked9,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            _isChecked9 = value!;
+                          });
+                        }),
                     _optionText('세부계산'),
                   ],
                 ),
@@ -199,42 +308,40 @@ class _HoldingTaxPageState extends State<HoldingTaxPage>
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 30, right: 30),
-                child: Expanded(
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      MediumText(text: '공시가격'),
-                      const SizedBox(
-                        width: 70,
-                      ),
-                      Expanded(
-                          child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                        ),
-                        child: TextField(
-                          keyboardType: TextInputType.number,
-                          focusNode: _focusNode,
-                          controller: _amountController,
-                          cursorColor: Colors.black,
-                          textInputAction: TextInputAction.search,
-                          style: const TextStyle(fontSize: 17),
-                          decoration: InputDecoration(
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.transparent),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.transparent),
-                            ),
-                            contentPadding: EdgeInsets.only(
-                                left: 15, right: 10, top: 10, bottom: 10),
-                            hintText: '금액 입력',
-                            hintStyle: const TextStyle(color: Colors.black38),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    MediumText(text: '공시가격'),
+                    const SizedBox(
+                      width: 70,
+                    ),
+                    Expanded(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
                           ),
-                        ),
-                      )),
-                    ],
-                  ),
+                          child: TextField(
+                            keyboardType: TextInputType.number,
+                            focusNode: _focusNode,
+                            controller: _amountController,
+                            cursorColor: Colors.black,
+                            textInputAction: TextInputAction.search,
+                            style: const TextStyle(fontSize: 17),
+                            decoration: InputDecoration(
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.transparent),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.transparent),
+                              ),
+                              contentPadding: EdgeInsets.only(
+                                  left: 15, right: 10, top: 10, bottom: 10),
+                              hintText: '금액 입력',
+                              hintStyle: const TextStyle(color: Colors.black38),
+                            ),
+                          ),
+                        )),
+                  ],
                 ),
               ),
               const SizedBox(
@@ -325,7 +432,7 @@ class _HoldingTaxPageState extends State<HoldingTaxPage>
     );
   }
 
-  Checkbox checkBox() {
+  Checkbox checkBox(bool _isChecked) {
     return Checkbox(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(35),
