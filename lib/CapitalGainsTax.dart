@@ -13,8 +13,6 @@ class CapitalGainsTaxPage extends StatefulWidget {
 }
 
 class _CapitalGainsTaxPageState extends State<CapitalGainsTaxPage> {
-
-  List<List<String>> _sampleList = [["서울특별시 강남구 도곡로21길 7(역삼동)", "서울특별시 강남구 역삼동 795-25 역삼1동경로당", "1168010100107950025"], ["서울특별시 강남구 도곡로21길 15(역삼동, 역삼동월드메르디앙아파트)", "서울특별시 강남구 역삼동 795-41 역삼동월드메르디앙아파트", "1168010100107950041"], ["서울특별시 강남구 도곡로21길 18(역삼동)", "서울특별시 강남구 역삼동 796-26 삼정빌딩", "1168010100107960026"], ["서울특별시 강남구 도곡로21길 20(역삼동)", "서울특별시 강남구 역삼동 796-16 태양빌딩", "1168010100107960016"], ["서울특별시 강남구 도곡로21길 22(역삼동)", "서울특별시 강남구 역삼동 796-9", "1168010100107960009"], ["서울특별시 강남구 도곡로21길 23(역삼동, 역삼그린빌리지)", "서울특별시 강남구 역삼동 795-10 역삼그린빌리지", "1168010100107950010"], ["서울특별시 강남구 도곡로21길 24(역삼동)", "서울특별시 강남구 역삼동 796-8", "1168010100107960008"], ["서울특별시 강남구 도곡로21길 25(역삼동)", "서울특별시 강남구 역삼동 795-4", "1168010100107950004"], ["서울특별시 강남구 도곡로21길 26(역삼동)", "서울특별시 강남구 역삼동 796-7", "1168010100107960007"], ["서울특별시 강남구 도곡로21길 27(역삼동)", "서울특별시 강남구 역삼동 795-3", "1168010100107950003"], ["서울특별시 강남구 도곡로14길 21(도곡동, 도곡3차아이파크)", "서울특별시 강남구 도곡동 970 도곡3차아이파크", "1168011800109700000"], ["서울특별시 강남구 도곡로17길 21(역삼동)", "서울특별시 강남구 역삼동 793-50", "1168010100107930050"], ["서울특별시 강남구 도곡로19길 21(역삼동)", "서울특별시 강남구 역삼동 794-12", "1168010100107940012"], ["서울특별시 강남구 도곡로19길 21-1(역삼동)", "서울특별시 강남구 역삼동 794-10", "1168010100107940010"], ["서울특별시 강남구 도곡로27길 21(역삼동, 로얄펠리스)", "서울특별시 강남구 역삼동 782-7 로얄펠리스", "1168010100107820007"], ["서울특별시 강남구 도곡로33길 21(역삼동)", "서울특별시 강남구 역삼동 781-25", "1168010100107810025"], ["서울특별시 강남구 도곡로43길 21(역삼동, 래미안그레이튼)", "서울특별시 강남구 역삼동 762-3 래미안그레이튼", "1168010100107620000"], ["서울특별시 강남구 도곡로64길 21(대치동)", "서울특별시 강남구 대치동 1013", "1168010600110130003"], ["서울특별시 강남구 도곡로73길 21(대치동)", "서울특별시 강남구 대치동 926-35", "1168010600109260035"], ["서울특별시 송파구 도곡로62길 21(잠실동)", "서울특별시 송파구 잠실동 302", "1171010100103020000"], ["서울특별시 송파구 도곡로62길 21(잠실동)", "서울특별시 송파구 잠실동 302 새한장로교회", "1171010100103020000"], ["서울특별시 송파구 도곡로64길 21(잠실동)", "서울특별시 송파구 잠실동 298-11", "1171010100102980011"]];
   final mainColor = 0xff80cfd5;
 
   bool _ischecked = false;
@@ -201,6 +199,9 @@ class _CapitalGainsTaxPageState extends State<CapitalGainsTaxPage> {
     return true;
   }
   Future<String> _findingAddressDialog(TextEditingController tc)async{
+    setState((){
+      _isSearchedAddress = false;
+    });
     var res = await showDialog(
         context: context,
         builder: (BuildContext context){
@@ -224,6 +225,12 @@ class _CapitalGainsTaxPageState extends State<CapitalGainsTaxPage> {
                             margin: const EdgeInsets.fromLTRB(0, 10, 0, 10),
                             child: TextField(
                                 controller: tc,
+                                autofocus: true,
+                                onSubmitted: (value){
+                                  setState((){
+                                    _isSearchedAddress = true;
+                                  });
+                                },
                                 cursorColor: Colors.black,
                                 textInputAction: TextInputAction.search,
                                 style: const TextStyle(fontSize: 17),
@@ -248,7 +255,7 @@ class _CapitalGainsTaxPageState extends State<CapitalGainsTaxPage> {
                             ),
                           ),
                           _isSearchedAddress? _addressList(tc.text)
-                              :Container(child: Center(child: Text('검색어를 입력해주세요'),))
+                              : const Center(child: Text('검색어를 입력해주세요'),)
                         ],
                       ),
                     )
@@ -260,6 +267,8 @@ class _CapitalGainsTaxPageState extends State<CapitalGainsTaxPage> {
 
     return res;
   }
+
+
 
   Widget _addressList(String keyword){
 
@@ -275,7 +284,7 @@ class _CapitalGainsTaxPageState extends State<CapitalGainsTaxPage> {
           }else if(snapshot.hasError){
             return Center(child: Text(snapshot.error.toString()));
           }
-          List<List<String>> res = snapshot.data as List<List<String>>;
+          List res = snapshot.data as List;
           return ListView.builder(
             itemCount: res.length,
             shrinkWrap: true,
@@ -310,21 +319,15 @@ class _CapitalGainsTaxPageState extends State<CapitalGainsTaxPage> {
     );
   }
 
-  Future<List<List<String>>> sampleFetchAddress()async{
-    await Future.delayed(Duration(seconds: 2));
-    return _sampleList;
-  }
 
-
-  Future<List<List<String>>> fetchAddress(String keyword) async{
+  Future<List> fetchAddress(String keyword) async{
     String baseURL = "https://wu26xy8cqj.execute-api.ap-northeast-2.amazonaws.com/default/juso_api?keyword=";
 
     final response = await http.get(Uri.parse(baseURL + keyword));
 
     if(response.statusCode == 200){
 
-      List<List<String>> res = List.from(jsonDecode(utf8.decode(response.bodyBytes)));
-
+      List res = List.from(jsonDecode(utf8.decode(response.bodyBytes)));
 
       return res;
     }
@@ -409,7 +412,7 @@ class _CapitalGainsTaxPageState extends State<CapitalGainsTaxPage> {
 
   Widget largeTitle(){
     return const Padding(
-      padding:  EdgeInsets.only(left: 30, top: 40, bottom: 20),
+      padding:  EdgeInsets.only(left: 10, top: 40, bottom: 20),
       child: LargeText(
         text: '양도소득세 통합 계산',
         size: 25,
@@ -421,7 +424,7 @@ class _CapitalGainsTaxPageState extends State<CapitalGainsTaxPage> {
     return Row(children: <Widget>[
       Expanded(
         child: Container(
-            margin: const EdgeInsets.only(left: 30, right: 15),
+            margin: const EdgeInsets.only(left: 10, right: 15),
             child: const Divider(
               color: Colors.red,
               height: 20,
@@ -433,7 +436,7 @@ class _CapitalGainsTaxPageState extends State<CapitalGainsTaxPage> {
       ),
       Expanded(
         child: Container(
-            margin: const EdgeInsets.only(left: 15, right: 30),
+            margin: const EdgeInsets.only(left: 15, right: 10),
             child: const Divider(
               color: Colors.red,
               height: 20,
