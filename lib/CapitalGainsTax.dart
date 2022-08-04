@@ -126,62 +126,61 @@ class _CapitalGainsTaxPageState extends State<CapitalGainsTaxPage> {
                         height: 50,
                       )),
                 ),
-              ],
-            ),
-            Row(
-              children: [
-                _smallTitle('간편선택'),
-                Checkbox(
-                    value: _ischecked,
-                    onChanged: (bool? value) {
-                      setState(() {
-                        _ischecked = value!;
-                      });
-                    }),
-                _optionText('보유기간과 동일'),
-                Checkbox(
-                    value: _ischecked,
-                    onChanged: (bool? value) {
-                      setState(() {
-                        _ischecked = value!;
-                      });
-                    }),
-                _optionText('거주기간 없음'),
-              ],
-            ),
-            Row(
-              children: [
-                _smallTitle('취득일자'),
-                _textField2(_startLivingDateTC, '19980218'),
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                  child: Icon(Icons.arrow_forward_rounded),
+                Row(
+                  children: [
+                    _smallTitle('간편선택'),
+                    Checkbox(
+                        value: _ischecked,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            _ischecked = value!;
+                          });
+                        }),
+                    _optionText('보유기간과 동일'),
+                    Checkbox(
+                        value: _ischecked,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            _ischecked = value!;
+                          });
+                        }),
+                    _optionText('거주기간 없음'),
+                  ],
                 ),
-                _textField2(_endLivingDateTC, '20220725'),
+                Row(
+                  children: [
+                    _smallTitle('취득일자'),
+                    _textField2(_startLivingDateTC, '19980218'),
+                    const Padding(
+                      padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                      child: Icon(Icons.arrow_forward_rounded),
+                    ),
+                    _textField2(_endLivingDateTC, '20220725'),
+                  ],
+                ),
+                Container(
+                  height: 50,
+                  margin: const EdgeInsets.fromLTRB(0, 50, 0, 10),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(primary: Colors.redAccent),
+                    onPressed: () {
+                      if (_checkFormIsCompleted()) {
+                        setState(() {});
+                      } else {
+                        setState(() {});
+                      }
+                    },
+                    child: const Text(
+                      '계산하기',
+                      style: TextStyle(fontSize: 20),
+                    ),
+                  ),
+                )
               ],
             ),
-            Container(
-              height: 50,
-              margin: const EdgeInsets.fromLTRB(0, 50, 0, 10),
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(primary: Colors.redAccent),
-                onPressed: () {
-                  if (_checkFormIsCompleted()) {
-                    setState(() {});
-                  } else {
-                    setState(() {});
-                  }
-                },
-                child: const Text(
-                  '계산하기',
-                  style: TextStyle(fontSize: 20),
-                ),
-              ),
-            )
-          ],
         ),
       ),
-    ));
+    );
   }
 
   bool _checkFormIsCompleted() {
