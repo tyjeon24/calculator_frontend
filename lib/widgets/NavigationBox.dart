@@ -32,7 +32,12 @@ class _NavigationBoxState extends State<NavigationBox> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () async {
-        final res = await Navigator.pushNamed(context, widget.pushNamed);
+        if(widget.pushNamed == '/'){
+          return;
+        }else{
+          final res = await Navigator.pushNamed(context, widget.pushNamed);
+        }
+
       },
       child: Container(
         // padding left(150), right(150) 빼주고, container 간 사이 간격 (30) * 3 빼줘서
