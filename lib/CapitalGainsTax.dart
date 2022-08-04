@@ -264,7 +264,7 @@ class _CapitalGainsTaxPageState extends State<CapitalGainsTaxPage> {
   Widget _addressList(String keyword){
 
     return Expanded(child: FutureBuilder(
-        future: sampleFetchAddress(),
+        future: fetchAddress(keyword),
         builder: (context, snapshot){
           if(snapshot.connectionState == ConnectionState.waiting){
             return Center(
@@ -322,23 +322,13 @@ class _CapitalGainsTaxPageState extends State<CapitalGainsTaxPage> {
     final response = await http.get(Uri.parse(baseURL + keyword));
 
     if(response.statusCode == 200){
-      print(response.body);
 
-      var resJson = jsonDecode(response.body);
+      List<List<String>> res = List.from(jsonDecode(utf8.decode(response.bodyBytes)));
 
-      List temp = List.from(resJson);
-
-      List<List<String>> res = [];
-
-      for(int i = 0 ; i < temp.length ; i++){
-        List<String> a = List<String>.from(temp[i]);
-        res.add(a);
-      }
 
       return res;
     }
     else {
-      print('헐랭');
       throw Exception("Fail to fetch address data");
     }
   }
