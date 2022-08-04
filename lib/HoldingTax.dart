@@ -199,42 +199,40 @@ class _HoldingTaxPageState extends State<HoldingTaxPage>
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 30, right: 30),
-                child: Expanded(
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      MediumText(text: '공시가격'),
-                      const SizedBox(
-                        width: 70,
-                      ),
-                      Expanded(
-                          child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                        ),
-                        child: TextField(
-                          keyboardType: TextInputType.number,
-                          focusNode: _focusNode,
-                          controller: _amountController,
-                          cursorColor: Colors.black,
-                          textInputAction: TextInputAction.search,
-                          style: const TextStyle(fontSize: 17),
-                          decoration: InputDecoration(
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.transparent),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.transparent),
-                            ),
-                            contentPadding: EdgeInsets.only(
-                                left: 15, right: 10, top: 10, bottom: 10),
-                            hintText: '금액 입력',
-                            hintStyle: const TextStyle(color: Colors.black38),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    MediumText(text: '공시가격'),
+                    const SizedBox(
+                      width: 70,
+                    ),
+                    Expanded(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
                           ),
-                        ),
-                      )),
-                    ],
-                  ),
+                          child: TextField(
+                            keyboardType: TextInputType.number,
+                            focusNode: _focusNode,
+                            controller: _amountController,
+                            cursorColor: Colors.black,
+                            textInputAction: TextInputAction.search,
+                            style: const TextStyle(fontSize: 17),
+                            decoration: InputDecoration(
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.transparent),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.transparent),
+                              ),
+                              contentPadding: EdgeInsets.only(
+                                  left: 15, right: 10, top: 10, bottom: 10),
+                              hintText: '금액 입력',
+                              hintStyle: const TextStyle(color: Colors.black38),
+                            ),
+                          ),
+                        )),
+                  ],
                 ),
               ),
               const SizedBox(

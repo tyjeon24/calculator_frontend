@@ -52,80 +52,78 @@ class _MyHomePageState extends State<MyHomePage> {
       child: Padding(
         padding:
             EdgeInsets.only(left: widget_width * .1, right: widget_width * .1),
-        child: Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(
-                height: 70,
-              ),
-              LargeText(
-                text: 'AI 세금 계산',
-              ),
-              const SizedBox(
-                height: 40,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  NavigationBox(
-                      pushNamed: '/capgain',
-                      title_1: '양도소득세',
-                      title_2: 'AI 판단 계산기'),
-                  NavigationBox(
-                      pushNamed: '/holding',
-                      title_1: '보유세(종부세, 재산세)',
-                      title_2: 'AI 판단 계산기'),
-                  NavigationBox(
+        child:Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(
+              height: 70,
+            ),
+            LargeText(
+              text: 'AI 세금 계산',
+            ),
+            const SizedBox(
+              height: 40,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: const [
+                NavigationBox(
                     pushNamed: '/capgain',
-                    title_1: '',
-                    title_2: '',
-                    iconColor: Colors.transparent,
-                    borderColor: Colors.transparent,
-                    boxColor: Colors.transparent,
-                  ),
-                  NavigationBox(
-                    pushNamed: '/capgain',
-                    title_1: '',
-                    title_2: '',
-                    iconColor: Colors.transparent,
-                    borderColor: Colors.transparent,
-                    boxColor: Colors.transparent,
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 150,
-              ),
-              LargeText(
-                text: 'TAXAI 컨설팅',
-              ),
-              const SizedBox(
-                height: 40,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  NavigationBox(
-                      pushNamed: '/capgain',
-                      title_1: '양도소득세 AI',
-                      title_2: '컨설팅'),
-                  NavigationBox(
-                      pushNamed: '/capgain',
-                      title_1: '매도 관련',
-                      title_2: 'AI 컨설팅'),
-                  NavigationBox(
-                      pushNamed: '/capgain',
-                      title_1: '매입 관련',
-                      title_2: 'AI 컨설팅'),
-                  NavigationBox(
-                      pushNamed: '/capgain',
-                      title_1: '증여 관련',
-                      title_2: 'AI 컨설팅')
-                ],
-              ),
-            ],
-          ),
+                    title_1: '양도소득세',
+                    title_2: 'AI 판단 계산기'),
+                NavigationBox(
+                    pushNamed: '/holding',
+                    title_1: '보유세(종부세, 재산세)',
+                    title_2: 'AI 판단 계산기'),
+                NavigationBox(
+                  pushNamed: '/',
+                  title_1: '',
+                  title_2: '',
+                  iconColor: Colors.transparent,
+                  borderColor: Colors.transparent,
+                  boxColor: Colors.transparent,
+                ),
+                NavigationBox(
+                  pushNamed: '/',
+                  title_1: '',
+                  title_2: '',
+                  iconColor: Colors.transparent,
+                  borderColor: Colors.transparent,
+                  boxColor: Colors.transparent,
+                ),
+              ],
+            ),
+            const SizedBox(
+              height: 150,
+            ),
+            LargeText(
+              text: 'TAXAI 컨설팅',
+            ),
+            const SizedBox(
+              height: 40,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: const [
+                NavigationBox(
+                    pushNamed: '/',
+                    title_1: '양도소득세 AI',
+                    title_2: '컨설팅'),
+                NavigationBox(
+                    pushNamed: '/',
+                    title_1: '매도 관련',
+                    title_2: 'AI 컨설팅'),
+                NavigationBox(
+                    pushNamed: '/',
+                    title_1: '매입 관련',
+                    title_2: 'AI 컨설팅'),
+                NavigationBox(
+                    pushNamed: '/',
+                    title_1: '증여 관련',
+                    title_2: 'AI 컨설팅')
+              ],
+            ),
+          ],
         ),
       ),
     ));
