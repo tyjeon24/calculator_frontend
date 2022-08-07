@@ -26,7 +26,7 @@ class _CapitalGainsTaxPageState extends State<CapitalGainsTaxPage> {
   final TextEditingController _transferDateTC = TextEditingController();
   final TextEditingController _findingAddressTC = TextEditingController();
 
-  final List<String> _typeOfTransfer = ["주택(주거용 오피스텔 포함)", "입주권", "분양권"];
+  final List<String> _typeOfTransfer = ["주택", "조합원 입주권", "분양권(2021년 이전 취득)", "분양권(2022년 이후 취득)"];
   String? _dropDownMenuForTypeOfTransfer;
   final List<String> _typeOfAcquisition = ["주택", "재건축전 주택", "주거용 오피스텔", "조합원 입주권", "분양권(2021년 이전 취득)", "분양권(2022년 이후 취득)"];
   String? _dropDownMenuForTypeOfAcquisition;
