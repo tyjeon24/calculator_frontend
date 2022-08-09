@@ -1,10 +1,13 @@
+// ignore_for_file: avoid_unnecessary_containers
 import 'dart:convert';
-
 import 'package:calculator_frontend/widgets/LargeText.dart';
+import 'package:csv/csv.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:async/async.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter/services.dart' show rootBundle;
 
 class CapitalGainsTaxPage extends StatefulWidget {
   const CapitalGainsTaxPage({Key? key}) : super(key: key);
@@ -26,14 +29,56 @@ class _CapitalGainsTaxPageState extends State<CapitalGainsTaxPage> {
   final TextEditingController _transferDateTC = TextEditingController();
   final TextEditingController _findingAddressTC = TextEditingController();
 
-  final List<String> _typeOfTransfer = ["주택", "조합원 입주권", "분양권(2021년 이전 취득)", "분양권(2022년 이후 취득)"];
+  final asyncMemoizer = AsyncMemoizer();
+
+  // 양도시 종류["주택", "조합원 입주권", "분양권(2021년 이전 취득)", "분양권(2022년 이후 취득)"]
+  // 취득시 종류["주택", "재건축전 주택", "주거용 오피스텔", "조합원 입주권", "분양권(2021년 이전 취득)", "분양권(2022년 이후 취득)"]
+  // 취득 원인["매매", "증여", "상속", "자가신축"]
+
+  List<List<dynamic>> originCSV = [];
+  List<List<dynamic>> currentCSV = [];
+
+  List<String> _typeOfTransfer = [];
   String? _dropDownMenuForTypeOfTransfer;
-  final List<String> _typeOfAcquisition = ["주택", "재건축전 주택", "주거용 오피스텔", "조합원 입주권", "분양권(2021년 이전 취득)", "분양권(2022년 이후 취득)"];
+  List<String> _typeOfAcquisition = [];
   String? _dropDownMenuForTypeOfAcquisition;
-  final List<String> _reasonOfAquistition = ["매매", "증여", "상속", "자가신축"];
+  List<String> _reasonOfAquistition = [];
   String? _dropDownMenuForReasonOfAquistition;
 
   late int _stage;
+
+  Future getCSVonce() => asyncMemoizer.runOnce(()async{
+    final _rawData = await rootBundle.loadString('assets/capgain/firstFilter.CSV');
+    List<List<dynamic>> listData = const CsvToListConverter().convert(_rawData);
+
+
+    List<List<dynamic>> res = listData.where((element) => (element[3] == 1)).toList();
+
+    originCSV = res;
+    currentCSV = res;
+
+    return res;
+  });
+
+  Future<List<List<dynamic>>> getCSV() async{
+    final _rawData = await rootBundle.loadString('assets/capgain/firstFilter.CSV');
+    List<List<dynamic>> listData = const CsvToListConverter().convert(_rawData);
+
+
+
+    List<List<dynamic>> res = listData.where((element) => (element[3] == 1)).toList();
+
+    originCSV = res;
+    currentCSV = res;
+
+    return res;
+  }
+
+  List<List<dynamic>> filterList(List<List<dynamic>> input, int index, String criteria){
+    List<List<dynamic>> res = input.where((element) => element[index] == criteria).toList();
+    return res;
+  }
+
 
   @override
   void initState() {
@@ -50,298 +95,335 @@ class _CapitalGainsTaxPageState extends State<CapitalGainsTaxPage> {
             constraints: const BoxConstraints(
               maxWidth: 1200,
             ),
-            child: ListView(
-              children: <Widget>[
-                largeTitle(),
-                firstDivider(),
-                Row(
-                  children: [
-                    _smallTitle('주소'),
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: ()async{
-                          var a = await _findingAddressDialog(_findingAddressTC);
+            child: FutureBuilder(
+                future: getCSVonce(),
+                builder: (context, snapshot){
+                  if(snapshot.connectionState == ConnectionState.waiting){
+                    return CircularProgressIndicator();
+                  }else if(snapshot.hasError){
+                    return Text(snapshot.error.toString());
+                  }else {
+                    List<List<dynamic>> res = snapshot.data as List<List<dynamic>>;
+                    return ListView(
+                      children: <Widget>[
+                        largeTitle(),
+                        firstDivider(),
+                        Row(
+                          children: [
+                            _smallTitle('주소'),
+                            Expanded(
+                                child: GestureDetector(
+                                  onTap: ()async{
+                                    var a = await _findingAddressDialog(_findingAddressTC);
 
-                          setState(() {
-                            sampleAddress = a!;
-                            _color = Colors.black;
-                            _stage = 2;
-                          });
-                        },
-                        child: Container(
-                            height: 50,
-                            decoration: BoxDecoration(
-                                border: Border.all(
-                                  color:  Colors.black,
-                                ),
-                                borderRadius: const BorderRadius.all(Radius.circular(10))
-                            ),
-                            margin: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                            padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children:  [
-                                Text(
-                                  sampleAddress,
-                                  style:  TextStyle(fontSize: 17,color: _color),
-                                ),
-                              ],
-                            )
-                        ),
-                      )
-                    )
-                  ],
-                ),
-                Row(
-                  children: [
-                    _smallTitle('양도시 종류'),
-                    Expanded(
-                        child: Container(
-                          margin: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                          child:GestureDetector(
-                            child:  LayoutBuilder(
-                              builder: (BuildContext context, BoxConstraints constraints){
-                                return DropdownButtonHideUnderline(
-                                  child: DropdownButton2(
-                                    isExpanded: true,
-                                    items: ((){
-                                      if(_stage >= 2){
-                                        return _typeOfTransfer;
-                                      }else {
-                                        return [];
-                                      }})().map((item) => DropdownMenuItem<String>(
-                                      value: item,
-                                      child: Text(
-                                        item,
-                                        style: const TextStyle(
-                                          fontSize: 17,
-                                          //color: Colors.white,
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    )).toList(),
-                                    value: _dropDownMenuForTypeOfTransfer,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        _dropDownMenuForTypeOfTransfer = value as String;
-                                        _stage = 3;
-                                      });
-                                    },
-                                    icon: const Icon(
-                                      Icons.keyboard_arrow_down,
-                                    ),
-                                    iconSize: 30,
-                                    buttonHeight: 50,
-                                    buttonPadding: const EdgeInsets.only(left: 14, right: 14),
-                                    buttonDecoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(14),
-                                      border: Border.all(),
-                                      color: ((){
-                                        if(_stage >= 2){
-                                          return Color(backgroundColor);
-                                        }
-                                        else {return Colors.black12;
-                                        }})(),
-                                    ),
-                                    buttonElevation: 2,
-                                    itemHeight: 40,
-                                    itemPadding: const EdgeInsets.only(left: 14, right: 14),
-                                    dropdownMaxHeight: 200,
-                                    dropdownWidth: constraints.maxWidth,
-                                    dropdownPadding: null,
-                                    dropdownDecoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(14),
-                                      // color: Colors.redAccent,
-                                    ),
-                                    dropdownElevation: 8,
-                                    scrollbarRadius: const Radius.circular(40),
-                                    scrollbarThickness: 6,
-                                    scrollbarAlwaysShow: true,
-                                    offset: const Offset(0, 0),
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                        )
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    _smallTitle('양도예정일'),
-                    _expectedTransferDate(_transferDateTC, '20220725',((){
-                      if(_stage >=3 ){return true;} else {return false;}})())
-                  ],
-                ),
-                Row(
-                  children: [
-                    _smallTitle('취득 원인'),
-                    Expanded(
-                        child: Container(
-                          margin: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                          child: LayoutBuilder(
-                            builder: (BuildContext context, BoxConstraints constraints){
-                              return DropdownButtonHideUnderline(
-                                child: DropdownButton2(
-                                  isExpanded: true,
-                                  items:((){
-                                    if(_stage >= 4){
-                                      return _reasonOfAquistition;
-                                    }else {
-                                      return [];
-                                    }})().map((item) => DropdownMenuItem<String>(
-                                    value: item,
-                                    child: Text(
-                                      item,
-                                      style: const TextStyle(
-                                        fontSize: 17,
-                                        //color: Colors.white,
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  )).toList(),
-                                  value: _dropDownMenuForReasonOfAquistition,
-                                  onChanged: (value) {
                                     setState(() {
-                                      _dropDownMenuForReasonOfAquistition = value as String;
-                                      _stage = 5;
+                                      sampleAddress = a!;
+                                      _color = Colors.black;
+                                      _stage = 2;
                                     });
                                   },
-                                  icon: const Icon(
-                                    Icons.keyboard_arrow_down,
+                                  child: Container(
+                                      height: 50,
+                                      decoration: BoxDecoration(
+                                          border: Border.all(
+                                            color:  Colors.black,
+                                          ),
+                                          borderRadius: const BorderRadius.all(Radius.circular(10))
+                                      ),
+                                      margin: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                                      padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children:  [
+                                          Text(
+                                            sampleAddress,
+                                            style:  TextStyle(fontSize: 17,color: _color),
+                                          ),
+                                        ],
+                                      )
                                   ),
-                                  iconSize: 30,
-                                  buttonHeight: 50,
-                                  buttonPadding: const EdgeInsets.only(left: 14, right: 14),
-                                  buttonDecoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(14),
-                                    border: Border.all(),
-                                    color: ((){
-                                      if(_stage >= 4){
-                                        return Color(backgroundColor);
-                                      }
-                                      else {return Colors.black12;
-                                      }})(),
+                                )
+                            )
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            _smallTitle('양도시 종류'),
+                            Expanded(
+                                child: Container(
+                                  margin: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                                  child:GestureDetector(
+                                    child:  LayoutBuilder(
+                                      builder: (BuildContext context, BoxConstraints constraints){
+                                        return DropdownButtonHideUnderline(
+                                          child: DropdownButton2(
+                                            isExpanded: true,
+                                            items: ((){
+                                              if(_stage >= 2){
+                                                List<List<dynamic>> temp = originCSV;
+                                                currentCSV = temp;
+                                                _typeOfTransfer.clear();
+                                                for(int i = 0 ; i < res.length ; i++){
+                                                  _typeOfTransfer.add(res[i][2]);
+                                                }
+                                                _typeOfTransfer = _typeOfTransfer.toSet().toList();
+                                                return _typeOfTransfer;
+                                              }else {
+                                                return [];
+                                              }})().map((item) => DropdownMenuItem<String>(
+                                              value: item,
+                                              child: Text(
+                                                item,
+                                                style: const TextStyle(
+                                                  fontSize: 17,
+                                                  //color: Colors.white,
+                                                ),
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            )).toList(),
+                                            value: _dropDownMenuForTypeOfTransfer,
+                                            onChanged: (value) {
+                                              setState(() {
+                                                _dropDownMenuForTypeOfTransfer = value as String;
+                                                _stage = 3;
+                                              });
+                                            },
+                                            icon: const Icon(
+                                              Icons.keyboard_arrow_down,
+                                            ),
+                                            iconSize: 30,
+                                            buttonHeight: 50,
+                                            buttonPadding: const EdgeInsets.only(left: 14, right: 14),
+                                            buttonDecoration: BoxDecoration(
+                                              borderRadius: BorderRadius.circular(14),
+                                              border: Border.all(),
+                                              color: ((){
+                                                if(_stage >= 2){
+                                                  return Color(backgroundColor);
+                                                }
+                                                else {return Colors.black12;
+                                                }})(),
+                                            ),
+                                            buttonElevation: 2,
+                                            itemHeight: 40,
+                                            itemPadding: const EdgeInsets.only(left: 14, right: 14),
+                                            dropdownMaxHeight: 200,
+                                            dropdownWidth: constraints.maxWidth,
+                                            dropdownPadding: null,
+                                            dropdownDecoration: BoxDecoration(
+                                              borderRadius: BorderRadius.circular(14),
+                                              // color: Colors.redAccent,
+                                            ),
+                                            dropdownElevation: 8,
+                                            scrollbarRadius: const Radius.circular(40),
+                                            scrollbarThickness: 6,
+                                            scrollbarAlwaysShow: true,
+                                            offset: const Offset(0, 0),
+                                          ),
+                                        );
+                                      },
+                                    ),
                                   ),
-                                  buttonElevation: 2,
-                                  itemHeight: 40,
-                                  itemPadding: const EdgeInsets.only(left: 14, right: 14),
-                                  dropdownMaxHeight: 200,
-                                  dropdownWidth: constraints.maxWidth,
-                                  dropdownPadding: null,
-                                  dropdownDecoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(14),
-                                    // color: Colors.redAccent,
+                                )
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            _smallTitle('양도예정일'),
+                            _expectedTransferDate(_transferDateTC, '20220725',((){
+                              if(_stage >=3 ){return true;} else {return false;}})())
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            _smallTitle('취득 원인'),
+                            Expanded(
+                                child: Container(
+                                  margin: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                                  child: LayoutBuilder(
+                                    builder: (BuildContext context, BoxConstraints constraints){
+                                      return DropdownButtonHideUnderline(
+                                        child: DropdownButton2(
+                                          isExpanded: true,
+                                          items:((){
+                                            if(_stage >= 4){
+                                              _reasonOfAquistition.clear();
+                                              currentCSV = currentCSV.where((element) => element[2] == _dropDownMenuForTypeOfTransfer).toList();
+
+                                              for(int i = 0 ; i < currentCSV.length ; i++){
+                                                _reasonOfAquistition.add(currentCSV[i][0]);
+                                              }
+
+                                              _reasonOfAquistition = _reasonOfAquistition.toSet().toList();
+
+                                              return _reasonOfAquistition;
+                                            }else {
+                                              return [];
+                                            }})().map((item) => DropdownMenuItem<String>(
+                                            value: item,
+                                            child: Text(
+                                              item,
+                                              style: const TextStyle(
+                                                fontSize: 17,
+                                                //color: Colors.white,
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          )).toList(),
+                                          value: _dropDownMenuForReasonOfAquistition,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              _dropDownMenuForReasonOfAquistition = value as String;
+                                              _stage = 5;
+                                            });
+                                          },
+                                          icon: const Icon(
+                                            Icons.keyboard_arrow_down,
+                                          ),
+                                          iconSize: 30,
+                                          buttonHeight: 50,
+                                          buttonPadding: const EdgeInsets.only(left: 14, right: 14),
+                                          buttonDecoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(14),
+                                            border: Border.all(),
+                                            color: ((){
+                                              if(_stage >= 4){
+                                                return Color(backgroundColor);
+                                              }
+                                              else {return Colors.black12;
+                                              }})(),
+                                          ),
+                                          buttonElevation: 2,
+                                          itemHeight: 40,
+                                          itemPadding: const EdgeInsets.only(left: 14, right: 14),
+                                          dropdownMaxHeight: 200,
+                                          dropdownWidth: constraints.maxWidth,
+                                          dropdownPadding: null,
+                                          dropdownDecoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(14),
+                                            // color: Colors.redAccent,
+                                          ),
+                                          dropdownElevation: 8,
+                                          scrollbarRadius: const Radius.circular(40),
+                                          scrollbarThickness: 6,
+                                          scrollbarAlwaysShow: true,
+                                          offset: const Offset(0, 0),
+                                        ),
+                                      );
+                                    },
                                   ),
-                                  dropdownElevation: 8,
-                                  scrollbarRadius: const Radius.circular(40),
-                                  scrollbarThickness: 6,
-                                  scrollbarAlwaysShow: true,
-                                  offset: const Offset(0, 0),
-                                ),
-                              );
+                                )
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            _smallTitle('취득시 종류'),
+                            Expanded(child: Container(
+                              margin: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                              child: LayoutBuilder(
+                                builder: (BuildContext context, BoxConstraints constraints){
+                                  return DropdownButtonHideUnderline(
+                                    child: DropdownButton2(
+                                      isExpanded: true,
+                                      items: ((){
+                                        if(_stage >= 5){
+                                          _typeOfAcquisition.clear();
+                                          currentCSV = currentCSV.where((element) => element[0] == _dropDownMenuForReasonOfAquistition).toList();
+
+                                          for(int i = 0 ; i < currentCSV.length ; i++){
+                                            _typeOfAcquisition.add(currentCSV[i][1]);
+                                          }
+
+                                          _typeOfAcquisition = _typeOfAcquisition.toSet().toList();
+
+                                          return _typeOfAcquisition;
+                                        }else {
+                                          return [];
+                                        }})()
+                                          .map((item) => DropdownMenuItem<String>(
+                                        value: item,
+                                        child: Text(
+                                          item,
+                                          style: const TextStyle(
+                                            fontSize: 17,
+                                            //color: Colors.white,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      )).toList(),
+                                      value: _dropDownMenuForTypeOfAcquisition,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          _dropDownMenuForTypeOfAcquisition = value as String;
+                                          _stage = 6;
+                                        });
+                                      },
+                                      icon: const Icon(
+                                        Icons.keyboard_arrow_down,
+                                      ),
+                                      iconSize: 30,
+                                      buttonHeight: 50,
+                                      buttonPadding: const EdgeInsets.only(left: 14, right: 14),
+                                      buttonDecoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(14),
+                                        border: Border.all(),
+                                        color:((){
+                                          if(_stage >= 5){
+                                            return Color(backgroundColor);
+                                          }
+                                          else {return Colors.black12;
+                                          }})(),
+                                      ),
+                                      buttonElevation: 2,
+                                      itemHeight: 40,
+                                      itemPadding: const EdgeInsets.only(left: 14, right: 14),
+                                      dropdownMaxHeight: 200,
+                                      dropdownWidth: constraints.maxWidth,
+                                      dropdownPadding: null,
+                                      dropdownDecoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(14),
+                                        // color: Colors.redAccent,
+                                      ),
+                                      dropdownElevation: 8,
+                                      scrollbarRadius: const Radius.circular(40),
+                                      scrollbarThickness: 6,
+                                      scrollbarAlwaysShow: true,
+                                      offset: const Offset(0, 0),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ))
+                          ],
+                        ),
+                        Container(
+                          height: 50,
+                          margin: const EdgeInsets.fromLTRB(0, 50, 0, 10),
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(primary: Colors.redAccent),
+                            onPressed: () {
+                              if (_checkFormIsCompleted()) {
+                                setState(() {});
+                              } else {
+                                setState(() {});
+                              }
                             },
+                            child: const Text(
+                              '계산하기',
+                              style: TextStyle(fontSize: 20),
+                            ),
                           ),
                         )
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    _smallTitle('취득시 종류'),
-                    Expanded(child: Container(
-                      margin: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                      child: LayoutBuilder(
-                        builder: (BuildContext context, BoxConstraints constraints){
-                          return DropdownButtonHideUnderline(
-                            child: DropdownButton2(
-                              isExpanded: true,
-                              items: ((){
-                                if(_stage >= 5){
-                                  return _typeOfAcquisition;
-                                }else {
-                                  return [];
-                                }})()
-                                  .map((item) => DropdownMenuItem<String>(
-                                value: item,
-                                child: Text(
-                                  item,
-                                  style: const TextStyle(
-                                    fontSize: 17,
-                                    //color: Colors.white,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              )).toList(),
-                              value: _dropDownMenuForTypeOfAcquisition,
-                              onChanged: (value) {
-                                setState(() {
-                                  _dropDownMenuForTypeOfAcquisition = value as String;
-                                  _stage = 6;
-                                });
-                              },
-                              icon: const Icon(
-                                Icons.keyboard_arrow_down,
-                              ),
-                              iconSize: 30,
-                              buttonHeight: 50,
-                              buttonPadding: const EdgeInsets.only(left: 14, right: 14),
-                              buttonDecoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(14),
-                                border: Border.all(),
-                                color:((){
-                                  if(_stage >= 5){
-                                    return Color(backgroundColor);
-                                  }
-                                  else {return Colors.black12;
-                                  }})(),
-                              ),
-                              buttonElevation: 2,
-                              itemHeight: 40,
-                              itemPadding: const EdgeInsets.only(left: 14, right: 14),
-                              dropdownMaxHeight: 200,
-                              dropdownWidth: constraints.maxWidth,
-                              dropdownPadding: null,
-                              dropdownDecoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(14),
-                                // color: Colors.redAccent,
-                              ),
-                              dropdownElevation: 8,
-                              scrollbarRadius: const Radius.circular(40),
-                              scrollbarThickness: 6,
-                              scrollbarAlwaysShow: true,
-                              offset: const Offset(0, 0),
-                            ),
-                          );
-                        },
-                      ),
-                    ))
-                  ],
-                ),
-                Container(
-                  height: 50,
-                  margin: const EdgeInsets.fromLTRB(0, 50, 0, 10),
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(primary: Colors.redAccent),
-                    onPressed: () {
-                      if (_checkFormIsCompleted()) {
-                        setState(() {});
-                      } else {
-                        setState(() {});
-                      }
-                    },
-                    child: const Text(
-                      '계산하기',
-                      style: TextStyle(fontSize: 20),
-                    ),
-                  ),
-                )
-              ],
+                      ],
+                    );
+                  }
+                }
             ),
-        ),
-      ),
+          ),
+        )
     );
   }
 
@@ -579,7 +661,8 @@ class _CapitalGainsTaxPageState extends State<CapitalGainsTaxPage> {
                 setState(() {
                   _stage = 4;
                 });
-              }else {
+              }
+              else {
                 setState(() {
                   _stage = 3;
                 });
