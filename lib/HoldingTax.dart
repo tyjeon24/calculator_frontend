@@ -29,6 +29,9 @@ class _HoldingTaxPageState extends State<HoldingTaxPage>
   final years = ['2021년', '2022년', '2023년']; //대상연도
   late List<bool> _isSelected;
 
+  String? selected_item = null;
+  List item_list = ['item1', 'item2', 'item3'];
+
   String description_path = 'assets/txt/HoldingTax_description.txt';
   String precaution_path = 'assets/txt/HoldingTax_precaution.txt';
   String description_txt = '';
@@ -90,6 +93,36 @@ class _HoldingTaxPageState extends State<HoldingTaxPage>
                 child: LargeText(
                   text: '보유세 통합 계산',
                   size: 25,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 30, right: 30),
+                child: Container(
+                  padding: EdgeInsets.only(
+                    left: 15,
+                  ),
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(color: Color(mainColor), width: 1),
+                      borderRadius: BorderRadius.circular(5)),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton(
+                        icon: Icon(Icons.arrow_drop_down_outlined),
+                        iconSize: 40,
+                        style: TextStyle(color: Colors.black87, fontSize: 15),
+                        isExpanded: true,
+                        hint: Text('주소를 입력하세요'),
+                        items: item_list
+                            .map((item) => DropdownMenuItem(
+                                child: Text(item), value: item))
+                            .toList(),
+                        value: selected_item,
+                        onChanged: (newItem) {
+                          setState(() {
+                            selected_item = newItem as String;
+                          });
+                        }),
+                  ),
                 ),
               ),
               Top_Container(context),
@@ -523,5 +556,4 @@ class _HoldingTaxPageState extends State<HoldingTaxPage>
       ),
     );
   }
-
 }
