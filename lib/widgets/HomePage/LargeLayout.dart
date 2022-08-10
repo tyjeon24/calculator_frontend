@@ -49,7 +49,6 @@ class _LargeLayoutState extends State<LargeLayout> {
                     ),
                     LargeText(
                       text: '세금 AI 계산기',
-                      color: Color(0xff4d4d4d),
                     ),
                     SizedBox(
                       height: widgetSize.height / 40,
@@ -60,7 +59,7 @@ class _LargeLayoutState extends State<LargeLayout> {
                         border: Border.all(width: 1),
                       ),
                       height: widgetSize.height * .25,
-                      width: widgetSize.width * .7,
+                      width: widgetSize.width * .8,
                       child: Center(child: Text('프로그램 설명')),
                     ),
                     SizedBox(
@@ -72,7 +71,7 @@ class _LargeLayoutState extends State<LargeLayout> {
                         border: Border.all(width: 1),
                       ),
                       height: widgetSize.height * .05,
-                      width: widgetSize.width * .7,
+                      width: widgetSize.width * .8,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [Text('개인정보처리방침/이용약관/제휴문의'), Text('특허출원 정보')],
