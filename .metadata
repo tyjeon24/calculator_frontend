@@ -4,6 +4,7 @@
 # This file should be version controlled.
 
 version:
+
   revision: f28e570c8cb12a004fae2d796d0d9cd46603bde9
   channel: dev
 
