@@ -34,7 +34,12 @@ class _NavigationBoxState extends State<NavigationBox> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () async {
-        final res = await Navigator.pushNamed(context, widget.pushNamed);
+        if(widget.pushNamed == '/'){
+          return;
+        }else{
+          final res = await Navigator.pushNamed(context, widget.pushNamed);
+        }
+
       },
       child: Container(
         width: widget.isMedium == true

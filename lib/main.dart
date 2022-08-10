@@ -1,7 +1,8 @@
 import 'package:calculator_frontend/CapitalGainsTax.dart';
 import 'package:calculator_frontend/HoldingTax.dart';
-import 'package:calculator_frontend/widgets/HomePage/LargeLayout.dart';
-import 'package:calculator_frontend/widgets/HomePage/MediumLayout.dart';
+import 'package:calculator_frontend/resume_CapitalGainsTax.dart';
+import 'package:calculator_frontend/widgets/LargeText.dart';
+import 'package:calculator_frontend/widgets/NavigationBox.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -47,5 +48,6 @@ class MyHomePage extends StatelessWidget {
         return LargeLayout;
       }
     });
+
   }
 }
