@@ -50,7 +50,6 @@ class _MediumLayoutState extends State<MediumLayout> {
                       ),
                       LargeText(
                         text: '세금 AI 계산기',
-                        color: Color(0xff4d4d4d),
                       ),
                       SizedBox(
                         height: widgetSize.height / 40,
@@ -61,7 +60,7 @@ class _MediumLayoutState extends State<MediumLayout> {
                           border: Border.all(width: 1),
                         ),
                         height: widgetSize.height * .25,
-                        width: widgetSize.width * .7,
+                        width: widgetSize.width * .8,
                         child: Center(child: Text('프로그램 설명')),
                       ),
                       SizedBox(
@@ -73,7 +72,7 @@ class _MediumLayoutState extends State<MediumLayout> {
                           border: Border.all(width: 1),
                         ),
                         height: widgetSize.height * .05,
-                        width: widgetSize.width * .7,
+                        width: widgetSize.width * .8,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
