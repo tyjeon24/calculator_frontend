@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_unnecessary_containers
 import 'dart:convert';
+import 'dart:html';
 import 'package:calculator_frontend/widgets/LargeText.dart';
 import 'package:csv/csv.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -28,6 +29,8 @@ class _CapitalGainsTaxPageState extends State<CapitalGainsTaxPage> {
 
   final TextEditingController _transferDateTC = TextEditingController();
   final TextEditingController _findingAddressTC = TextEditingController();
+  final TextEditingController _transferPriceTC = TextEditingController();
+  final TextEditingController _acquisitionPriceTC = TextEditingController();
 
   final asyncMemoizer = AsyncMemoizer();
 
@@ -38,12 +41,22 @@ class _CapitalGainsTaxPageState extends State<CapitalGainsTaxPage> {
   List<List<dynamic>> originCSV = [];
   List<List<dynamic>> currentCSV = [];
 
+  List<String> _residencePeriod =  List.generate(11, (index){
+    if(index == 0){
+      return '1년 미만';
+    }else {return '$index년 이상';}
+  });
+
+  String? _dropDownMenuForResidencePeriod;
+
   List<String> _typeOfTransfer = [];
   String? _dropDownMenuForTypeOfTransfer;
   List<String> _typeOfAcquisition = [];
   String? _dropDownMenuForTypeOfAcquisition;
   List<String> _reasonOfAquistition = [];
   String? _dropDownMenuForReasonOfAquistition;
+
+  late CustomDropDown _customDropdown;
 
   late int _stage;
 
@@ -59,20 +72,6 @@ class _CapitalGainsTaxPageState extends State<CapitalGainsTaxPage> {
 
     return res;
   });
-
-  Future<List<List<dynamic>>> getCSV() async{
-    final _rawData = await rootBundle.loadString('assets/capgain/firstFilter.CSV');
-    List<List<dynamic>> listData = const CsvToListConverter().convert(_rawData);
-
-
-
-    List<List<dynamic>> res = listData.where((element) => (element[3] == 1)).toList();
-
-    originCSV = res;
-    currentCSV = res;
-
-    return res;
-  }
 
   List<List<dynamic>> filterList(List<List<dynamic>> input, int index, String criteria){
     List<List<dynamic>> res = input.where((element) => element[index] == criteria).toList();
@@ -399,6 +398,94 @@ class _CapitalGainsTaxPageState extends State<CapitalGainsTaxPage> {
                             ))
                           ],
                         ),
+                        const Divider(),
+
+                        const Divider(),
+                        Row(
+                          children: [
+                            _smallTitle('취득후 거주기간'),
+                            Expanded(
+                                child: Container(
+                                  margin: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                                  child: LayoutBuilder(
+                                    builder: (BuildContext context, BoxConstraints constraints){
+                                      return DropdownButtonHideUnderline(
+                                        child: DropdownButton2(
+                                          isExpanded: true,
+                                          items:((){
+                                            if(_stage >= 6){
+                                              return _residencePeriod;
+                                            }else {
+                                              return [];
+                                            }})().map((item) => DropdownMenuItem<String>(
+                                            value: item,
+                                            child: Text(
+                                              item,
+                                              style: const TextStyle(
+                                                fontSize: 17,
+                                                //color: Colors.white,
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          )).toList(),
+                                          value: _dropDownMenuForResidencePeriod,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              _dropDownMenuForResidencePeriod = value as String;
+                                              _stage = 7;
+                                            });
+                                          },
+                                          icon: const Icon(
+                                            Icons.keyboard_arrow_down,
+                                          ),
+                                          iconSize: 30,
+                                          buttonHeight: 50,
+                                          buttonPadding: const EdgeInsets.only(left: 14, right: 14),
+                                          buttonDecoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(14),
+                                            border: Border.all(),
+                                            color: ((){
+                                              if(_stage >= 5){
+                                                return Color(backgroundColor);
+                                              }
+                                              else {return Colors.black12;
+                                              }})(),
+                                          ),
+                                          buttonElevation: 2,
+                                          itemHeight: 40,
+                                          itemPadding: const EdgeInsets.only(left: 14, right: 14),
+                                          dropdownMaxHeight: 200,
+                                          dropdownWidth: constraints.maxWidth,
+                                          dropdownPadding: null,
+                                          dropdownDecoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(14),
+                                            // color: Colors.redAccent,
+                                          ),
+                                          dropdownElevation: 8,
+                                          scrollbarRadius: const Radius.circular(40),
+                                          scrollbarThickness: 6,
+                                          scrollbarAlwaysShow: true,
+                                          offset: const Offset(0, 0),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                )
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            _smallTitle('양도가액'),
+                            _transferPrice(_transferPriceTC, '700000000',_stage >= 7)
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            _smallTitle('취득가액 및 필요경비'),
+                            _acquisitionPrice(_acquisitionPriceTC, '10000000',_stage >= 8)
+                          ],
+                        ),
                         Container(
                           height: 50,
                           margin: const EdgeInsets.fromLTRB(0, 50, 0, 10),
@@ -416,7 +503,7 @@ class _CapitalGainsTaxPageState extends State<CapitalGainsTaxPage> {
                               style: TextStyle(fontSize: 20),
                             ),
                           ),
-                        )
+                        ),
                       ],
                     );
                   }
@@ -427,69 +514,11 @@ class _CapitalGainsTaxPageState extends State<CapitalGainsTaxPage> {
     );
   }
 
-  Widget _customDropdown(List<String> listofItems, String selected){
-    return Container(
-      margin: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-      child: LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints){
-          return DropdownButtonHideUnderline(
-            child: DropdownButton2(
-              isExpanded: true,
-              items: listofItems
-                  .map((item) => DropdownMenuItem<String>(
-                value: item,
-                child: Text(
-                  item,
-                  style: const TextStyle(
-                    fontSize: 17,
-                    //color: Colors.white,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              )).toList(),
-              value: selected,
-              onChanged: (value) {
-                setState(() {
-                  selected = value as String;
-                });
-              },
-              icon: const Icon(
-                Icons.keyboard_arrow_down,
-              ),
-              iconSize: 30,
-              buttonHeight: 50,
-              buttonPadding: const EdgeInsets.only(left: 14, right: 14),
-              buttonDecoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(),
-                color: Colors.white,
-              ),
-              buttonElevation: 2,
-              itemHeight: 40,
-              itemPadding: const EdgeInsets.only(left: 14, right: 14),
-              dropdownMaxHeight: 200,
-              dropdownWidth: constraints.maxWidth,
-              dropdownPadding: null,
-              dropdownDecoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(14),
-                // color: Colors.redAccent,
-              ),
-              dropdownElevation: 8,
-              scrollbarRadius: const Radius.circular(40),
-              scrollbarThickness: 6,
-              scrollbarAlwaysShow: true,
-              offset: const Offset(0, 0),
-            ),
-          );
-        },
-      ),
-    );
-  }
 
   bool _checkFormIsCompleted() {
-
     return true;
   }
+
   Future<String> _findingAddressDialog(TextEditingController tc)async{
     setState((){
       _isSearchedAddress = false;
@@ -547,7 +576,8 @@ class _CapitalGainsTaxPageState extends State<CapitalGainsTaxPage> {
                             ),
                           ),
                           _isSearchedAddress? _addressList(tc.text)
-                              : const Center(child: Text('검색어를 입력해주세요'),)
+                              : const Center(child: Text('검색어를 입력해주세요'),
+                          )
                         ],
                       ),
                     )
@@ -651,6 +681,74 @@ class _CapitalGainsTaxPageState extends State<CapitalGainsTaxPage> {
     ));
   }
 
+  Widget _transferPrice(TextEditingController tc, String hintText,bool able) {
+    return Expanded(
+        child: Container(
+          margin: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+          child: TextField(
+            onChanged: (text){
+              if(tc.text.isNotEmpty){
+                setState(() {
+                  _stage = 8;
+                });
+              }
+              else {
+                setState(() {
+                  _stage = 7;
+                });
+              }
+            },
+            enabled: able,
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            controller: tc,
+            cursorColor: Colors.black,
+            textInputAction: TextInputAction.search,
+            style: const TextStyle(fontSize: 17),
+            decoration: InputDecoration(
+              hintText: hintText,
+              hintStyle: const TextStyle(color: Colors.black38),
+              focusedBorder: _outlineInputBorder(),
+              enabledBorder: _outlineInputBorder(),
+              border: _outlineInputBorder(),
+            ),
+          ),
+        ));
+  }
+
+  Widget _acquisitionPrice (TextEditingController tc, String hintText,bool able) {
+    return Expanded(
+        child: Container(
+          margin: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+          child: TextField(
+            onChanged: (text){
+              if(tc.text.isNotEmpty){
+                setState(() {
+                  _stage = 9;
+                });
+              }
+              else {
+                setState(() {
+                  _stage = 8;
+                });
+              }
+            },
+            enabled: able,
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            controller: tc,
+            cursorColor: Colors.black,
+            textInputAction: TextInputAction.search,
+            style: const TextStyle(fontSize: 17),
+            decoration: InputDecoration(
+              hintText: hintText,
+              hintStyle: const TextStyle(color: Colors.black38),
+              focusedBorder: _outlineInputBorder(),
+              enabledBorder: _outlineInputBorder(),
+              border: _outlineInputBorder(),
+            ),
+          ),
+        ));
+  }
+
   Widget _expectedTransferDate(TextEditingController tc, String hintText,bool able) {
     return Expanded(
         child: Container(
@@ -703,7 +801,7 @@ class _CapitalGainsTaxPageState extends State<CapitalGainsTaxPage> {
 
   Widget _smallTitle(String txt) {
     return Container(
-      width: 120,
+      width: 140,
       margin: const EdgeInsets.fromLTRB(10, 10, 10, 10),
       child: Text(
         txt,
@@ -744,38 +842,38 @@ class _CapitalGainsTaxPageState extends State<CapitalGainsTaxPage> {
               height: 20,
             )),
       ),
-    ]);
+
+    ]
+    );
 
   }
 }
 
-class customDropDown extends StatefulWidget {
+class CustomDropDown extends StatefulWidget {
 
   final List items;
-  final String selectedItem;
-  final bool able;
+  final int currentStage;
+  final int myStage;
 
-  customDropDown({Key? key, required this.items, required this.selectedItem, required this.able}) : super(key: key);
+  CustomDropDown({Key? key, required this.items,  required this.currentStage, required this.myStage}) : super(key: key);
 
-  final _customDropDownState _state = _customDropDownState();
+  final _CustomDropDownState _state = _CustomDropDownState();
 
   @override
-  State<customDropDown> createState() => _state;
+  State<CustomDropDown> createState() => _state;
 
-  void returnSelected(){
-    print( _state._selected);
+  String? getSelectedItem(){
+    return _state._selected;
   }
 }
 
-class _customDropDownState extends State<customDropDown> {
+class _CustomDropDownState extends State<CustomDropDown> {
 
-  late String _selected;
+  String? _selected;
 
   @override
   void initState() {
     // TODO: implement initState
-
-    _selected = widget.selectedItem;
     super.initState();
   }
 
@@ -790,8 +888,12 @@ class _customDropDownState extends State<customDropDown> {
           return DropdownButtonHideUnderline(
             child: DropdownButton2(
               isExpanded: true,
-              items: widget.items
-                  .map((item) => DropdownMenuItem<String>(
+              items: ((){
+                if(widget.currentStage >= widget.myStage){
+                  return widget.items;
+                }else {
+                  return [];
+                }})().map((item) => DropdownMenuItem<String>(
                 value: item,
                 child: Text(
                   item,
