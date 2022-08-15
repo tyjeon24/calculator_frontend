@@ -32,14 +32,17 @@ class _CapitalGainsTaxPageState extends State<CapitalGainsTaxPage> {
   final TextEditingController _transferPriceTC = TextEditingController();
   final TextEditingController _acquisitionPriceTC = TextEditingController();
 
+  List acquisitionETCTCList = List.generate(5, (index) => TextEditingController());
+
   final asyncMemoizer = AsyncMemoizer();
 
   // 양도시 종류["주택", "조합원 입주권", "분양권(2021년 이전 취득)", "분양권(2022년 이후 취득)"]
   // 취득시 종류["주택", "재건축전 주택", "주거용 오피스텔", "조합원 입주권", "분양권(2021년 이전 취득)", "분양권(2022년 이후 취득)"]
   // 취득 원인["매매", "증여", "상속", "자가신축"]
 
-  List<List<dynamic>> originCSV = [];
+  List<List<dynamic>> firstFilterCSV = [];
   List<List<dynamic>> currentCSV = [];
+  List<List<dynamic>> originCSV = [];
 
   List<String> _residencePeriod =  List.generate(11, (index){
     if(index == 0){
@@ -55,20 +58,25 @@ class _CapitalGainsTaxPageState extends State<CapitalGainsTaxPage> {
   String? _dropDownMenuForTypeOfAcquisition;
   List<String> _reasonOfAquistition = [];
   String? _dropDownMenuForReasonOfAquistition;
+  String? _dropDownMenuHavingHome;
 
   late CustomDropDown _customDropdown;
 
   late int _stage;
 
   Future getCSVonce() => asyncMemoizer.runOnce(()async{
-    final _rawData = await rootBundle.loadString('assets/capgain/firstFilter.CSV');
-    List<List<dynamic>> listData = const CsvToListConverter().convert(_rawData);
+    final _rawData1 = await rootBundle.loadString('assets/capgain/firstFilter.CSV');
+    final _rawData2 = await rootBundle.loadString('assets/capgain/AcquisitionDate.CSV');
+
+    List<List<dynamic>> listData1 = const CsvToListConverter().convert(_rawData1);
+    List<List<dynamic>> listData2 = const CsvToListConverter().convert(_rawData2);
 
 
-    List<List<dynamic>> res = listData.where((element) => (element[3] == 1)).toList();
+    List<List<dynamic>> res = listData1.where((element) => (element[3] == 1)).toList();
 
-    originCSV = res;
+    firstFilterCSV = res;
     currentCSV = res;
+    originCSV = listData2;
 
     return res;
   });
@@ -116,7 +124,7 @@ class _CapitalGainsTaxPageState extends State<CapitalGainsTaxPage> {
                                     var a = await _findingAddressDialog(_findingAddressTC);
 
                                     setState(() {
-                                      sampleAddress = a!;
+                                      sampleAddress = a;
                                       _color = Colors.black;
                                       _stage = 2;
                                     });
@@ -160,7 +168,7 @@ class _CapitalGainsTaxPageState extends State<CapitalGainsTaxPage> {
                                             isExpanded: true,
                                             items: ((){
                                               if(_stage >= 2){
-                                                List<List<dynamic>> temp = originCSV;
+                                                List<List<dynamic>> temp = firstFilterCSV;
                                                 currentCSV = temp;
                                                 _typeOfTransfer.clear();
                                                 for(int i = 0 ; i < res.length ; i++){
@@ -395,11 +403,12 @@ class _CapitalGainsTaxPageState extends State<CapitalGainsTaxPage> {
                                   );
                                 },
                               ),
-                            ))
+                            )
+                            )
                           ],
                         ),
                         const Divider(),
-
+                        AcquisitionDateETC(),
                         const Divider(),
                         Row(
                           children: [
@@ -445,7 +454,7 @@ class _CapitalGainsTaxPageState extends State<CapitalGainsTaxPage> {
                                             borderRadius: BorderRadius.circular(14),
                                             border: Border.all(),
                                             color: ((){
-                                              if(_stage >= 5){
+                                              if(_stage >= 6){
                                                 return Color(backgroundColor);
                                               }
                                               else {return Colors.black12;
@@ -512,6 +521,99 @@ class _CapitalGainsTaxPageState extends State<CapitalGainsTaxPage> {
           ),
         )
     );
+  }
+
+  Widget AcquisitionDateETC(){
+    Widget whetherHavingHome(){
+      return Row(
+        children: [
+          _smallTitle('계약일 당시 무주택 여부 (o,x)'),
+          Expanded(child: Container(
+            margin: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+            child: LayoutBuilder(
+              builder: (BuildContext context, BoxConstraints constraints){
+                return DropdownButtonHideUnderline(
+                  child: DropdownButton2(
+                    isExpanded: true,
+                    items: ['O','X'].map((item) => DropdownMenuItem<String>(
+                      value: item,
+                      child: Text(
+                        item,
+                        style: const TextStyle(
+                          fontSize: 17,
+                          //color: Colors.white,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    )).toList(),
+                    value: _dropDownMenuHavingHome,
+                    onChanged: (value) {
+                      setState(() {
+                        _dropDownMenuHavingHome = value as String;
+                      });
+                    },
+                    icon: const Icon(
+                      Icons.keyboard_arrow_down,
+                    ),
+                    iconSize: 30,
+                    buttonHeight: 50,
+                    buttonPadding: const EdgeInsets.only(left: 14, right: 14),
+                    buttonDecoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(),
+                      color: Color(backgroundColor),
+                    ),
+                    buttonElevation: 2,
+                    itemHeight: 40,
+                    itemPadding: const EdgeInsets.only(left: 14, right: 14),
+                    dropdownMaxHeight: 200,
+                    dropdownWidth: constraints.maxWidth,
+                    dropdownPadding: null,
+                    dropdownDecoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(14),
+                      // color: Colors.redAccent,
+                    ),
+                    dropdownElevation: 8,
+                    scrollbarRadius: const Radius.circular(40),
+                    scrollbarThickness: 6,
+                    scrollbarAlwaysShow: true,
+                    offset: const Offset(0, 0),
+                  ),
+                );
+              },
+            ),
+          )
+          )
+        ],
+      );
+    }
+    if(_stage<6){
+      return Container();
+    }
+    else {
+      List<List<dynamic>> csv = originCSV.where((element) => (element[0] == _dropDownMenuForTypeOfTransfer) && (element[1] == _dropDownMenuForReasonOfAquistition) && (element[2] == _dropDownMenuForTypeOfAcquisition)).toList();
+
+      return ListView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: csv.length,
+          itemBuilder: (context, index){
+            if(csv[index][4] == '계약일 당시 무주택 여부 (o,x)'){
+              return whetherHavingHome();
+            }else {
+              return Row(
+                children: [
+                  _smallTitle(csv[index][4]),
+                  _textField2(acquisitionETCTCList[index],'',true)
+                ],
+              );
+            }
+
+          }
+      );
+    }
+
+
   }
 
 
@@ -586,7 +688,6 @@ class _CapitalGainsTaxPageState extends State<CapitalGainsTaxPage> {
           );
         }
     );
-
     return res;
   }
 
@@ -783,21 +884,36 @@ class _CapitalGainsTaxPageState extends State<CapitalGainsTaxPage> {
         ));
   }
 
+  Widget _textField2(TextEditingController tc, String hintText,bool able) {
+    return Expanded(
+        child: Container(
+          margin: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+          child: TextField(
+            onChanged: (text){
+            },
+            enabled: able,
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            controller: tc,
+            cursorColor: Colors.black,
+            textInputAction: TextInputAction.search,
+            style: const TextStyle(fontSize: 17),
+            decoration: InputDecoration(
+              hintText: hintText,
+              hintStyle: const TextStyle(color: Colors.black38),
+              focusedBorder: _outlineInputBorder(),
+              enabledBorder: _outlineInputBorder(),
+              border: _outlineInputBorder(),
+            ),
+          ),
+        ));
+  }
+
   OutlineInputBorder _outlineInputBorder() {
     return const OutlineInputBorder(
         borderSide: BorderSide(color: Colors.black),
         borderRadius: BorderRadius.all(Radius.circular(10)));
   }
 
-  Widget _optionText(String txt) {
-    return Container(
-      margin: const EdgeInsets.fromLTRB(0, 0, 10, 0),
-      child: Text(
-        txt,
-        style: TextStyle(fontSize: 17),
-      ),
-    );
-  }
 
   Widget _smallTitle(String txt) {
     return Container(
