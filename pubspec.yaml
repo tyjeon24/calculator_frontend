@@ -27,7 +27,7 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
-  async: ^2.9.0
+  async: ^2.8.2
   csv: ^5.0.1
   http: ^0.13.4
   flutter:
@@ -70,6 +70,7 @@ flutter:
     - assets/images/logo.png
     - assets/images/logo2.png
     - assets/capgain/firstFilter.CSV
+    - assets/capgain/AcquisitionDate.CSV
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
