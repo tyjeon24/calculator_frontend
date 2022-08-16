@@ -608,12 +608,9 @@ class _CapitalGainsTaxPageState extends State<CapitalGainsTaxPage> {
                 ],
               );
             }
-
           }
       );
     }
-
-
   }
 
 
