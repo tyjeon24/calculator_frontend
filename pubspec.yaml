@@ -30,6 +30,7 @@ dependencies:
   async: ^2.8.2
   csv: ^5.0.1
   http: ^0.13.4
+  badges: ^2.0.3
   flutter:
     sdk: flutter
 
