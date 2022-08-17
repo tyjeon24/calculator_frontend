@@ -18,9 +18,12 @@ class _Resume_HoldingTaxPageState extends State<Resume_HoldingTaxPage> {
   final List select_num_of_house = ['1세대 1주택', '1세대 2주택', '1세대 3주택 이상'];
   final List num_of_house = ['1', '2', '3+'];
   List<bool> _is_selected_num_of_house = [false, false, false];
-  bool _is_house_1_Selected = false;
-  bool _is_house_2_Selected = false;
-  bool _is_house_3_Selected = false;
+  final List select_holdig_period = ['5년 미만', '5년 이상', '10년 이상', '15년 이상'];
+  List<bool> _is_selected_holding_period = [false, false, false, false];
+  final List select_age = ['60세 미만', '60세 이상', '65세 이상', '70세 이상'];
+  List<bool> _is_selected_owner = [false, false, false, false];
+  final List select_owner = ['A', 'B', 'C', 'D'];
+  List<bool> _is_selected_age = [false, false, false, false];
   final Color mainColor = Color(0xff80cfd5);
   String sampleaddr = '서울특별시 서초구 반포대로4(서초동)';
   Color samplecolor = Colors.black38;
@@ -37,6 +40,10 @@ class _Resume_HoldingTaxPageState extends State<Resume_HoldingTaxPage> {
 
   void _clearText() {
     _findingAddressTC.clear();
+  }
+
+  void _back(BuildContext context) {
+    Navigator.pop(context);
   }
 
   @override
@@ -76,7 +83,7 @@ class _Resume_HoldingTaxPageState extends State<Resume_HoldingTaxPage> {
                         ),
                         Selected_num_of_house(),
                         const SizedBox(
-                          height: 30,
+                          height: 40,
                         ),
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -487,21 +494,184 @@ class _Resume_HoldingTaxPageState extends State<Resume_HoldingTaxPage> {
                               )
                             : SizedBox(),
                         const SizedBox(
-                          height: 30,
+                          height: 40,
                         ),
                         index_selected >= 1
                             ? Row(
-                                children: [LabelwithBadge_2('소유주')],
+                                children: [
+                                  LabelwithBadge_2('소유주'),
+                                  CheckBox_owner(0),
+                                  CheckBox_owner(1),
+                                  CheckBox_owner(2),
+                                  CheckBox_owner(3),
+                                ],
                               )
-                            : Row(
-                                children: [LabelwithBadge_1('보유기간')],
-                              )
+                            : Column(
+                                children: [
+                                  Row(
+                                    children: [
+                                      LabelwithBadge_1('보유기간'),
+                                      CheckBox_holding_period(0),
+                                      CheckBox_holding_period(1),
+                                      CheckBox_holding_period(2),
+                                      CheckBox_holding_period(3),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 40),
+                                  Row(
+                                    children: [
+                                      LabelwithBadge_1('연령입력'),
+                                      CheckBox_age(0),
+                                      CheckBox_age(1),
+                                      CheckBox_age(2),
+                                      CheckBox_age(3),
+                                    ],
+                                  )
+                                ],
+                              ),
+                        const SizedBox(height: 40,),
+                        Row(
+                          children: [Label('공시가격')],
+                        ),
                       ],
                     ))
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  SizedBox CheckBox_owner(int idx) {
+    int count_selected_owner =
+        _is_selected_owner.where((element) => element == true).length;
+    int index_selected_owner =
+        _is_selected_owner.indexWhere((element) => element == true);
+    return SizedBox(
+      width: 140,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Transform.scale(
+            scale: 1.1,
+            child: Checkbox(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(35),
+                ),
+                side: BorderSide(width: 1, color: mainColor),
+                checkColor: Colors.white,
+                activeColor: mainColor,
+                value: _is_selected_owner[idx],
+                onChanged: (bool? value) {
+                  setState(() {
+                    if (count_selected_owner == 0) {
+                      _is_selected_owner[idx] = value!;
+                    } else if (count_selected_owner == 1) {
+                      if (index_selected_owner == idx) {
+                        _is_selected_owner[idx] = !_is_selected_owner[idx];
+                      }
+                    }
+                  });
+                }),
+          ),
+          const SizedBox(
+            width: 1,
+          ),
+          Text(
+            select_owner[idx],
+            style: TextStyle(fontSize: 19),
+          )
+        ],
+      ),
+    );
+  }
+
+  SizedBox CheckBox_age(int idx) {
+    int count_selected_age =
+        _is_selected_age.where((element) => element == true).length;
+    int index_selected_age =
+        _is_selected_age.indexWhere((element) => element == true);
+    return SizedBox(
+      width: 140,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Transform.scale(
+            scale: 1.1,
+            child: Checkbox(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(35),
+                ),
+                side: BorderSide(width: 1, color: mainColor),
+                checkColor: Colors.white,
+                activeColor: mainColor,
+                value: _is_selected_age[idx],
+                onChanged: (bool? value) {
+                  setState(() {
+                    if (count_selected_age == 0) {
+                      _is_selected_age[idx] = value!;
+                    } else if (count_selected_age == 1) {
+                      if (index_selected_age == idx) {
+                        _is_selected_age[idx] = !_is_selected_age[idx];
+                      }
+                    }
+                  });
+                }),
+          ),
+          const SizedBox(
+            width: 1,
+          ),
+          Text(
+            select_age[idx],
+            style: TextStyle(fontSize: 19),
+          )
+        ],
+      ),
+    );
+  }
+
+  SizedBox CheckBox_holding_period(int idx) {
+    int count_selected_holding_period =
+        _is_selected_holding_period.where((element) => element == true).length;
+    int index_selected_holding_period =
+        _is_selected_holding_period.indexWhere((element) => element == true);
+    return SizedBox(
+      width: 140,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Transform.scale(
+            scale: 1.1,
+            child: Checkbox(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(35),
+                ),
+                side: BorderSide(width: 1, color: mainColor),
+                checkColor: Colors.white,
+                activeColor: mainColor,
+                value: _is_selected_holding_period[idx],
+                onChanged: (bool? value) {
+                  setState(() {
+                    if (count_selected_holding_period == 0) {
+                      _is_selected_holding_period[idx] = value!;
+                    } else if (count_selected_holding_period == 1) {
+                      if (index_selected_holding_period == idx) {
+                        _is_selected_holding_period[idx] =
+                            !_is_selected_holding_period[idx];
+                      }
+                    }
+                  });
+                }),
+          ),
+          const SizedBox(
+            width: 1,
+          ),
+          Text(
+            select_holdig_period[idx],
+            style: TextStyle(fontSize: 19),
+          )
+        ],
       ),
     );
   }
@@ -701,6 +871,20 @@ class _Resume_HoldingTaxPageState extends State<Resume_HoldingTaxPage> {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 title: Text('주소 검색'),
+                actions: [
+                  Padding(
+                    padding: const EdgeInsets.all(5),
+                    child: IconButton(
+                        onPressed: () {
+                          _back(context);
+                        },
+                        icon: Icon(
+                          Icons.cancel_outlined,
+                          color: mainColor,
+                          size: 35,
+                        )),
+                  )
+                ],
                 content: Container(
                   color: Colors.grey[60],
                   width: 600,
