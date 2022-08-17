@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:badges/badges.dart';
 import 'package:calculator_frontend/widgets/LargeText.dart';
 import 'package:calculator_frontend/widgets/MediumText.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +16,8 @@ class Resume_HoldingTaxPage extends StatefulWidget {
 
 class _Resume_HoldingTaxPageState extends State<Resume_HoldingTaxPage> {
   final List select_num_of_house = ['1세대 1주택', '1세대 2주택', '1세대 3주택 이상'];
+  final List num_of_house = ['1', '2', '3+'];
+  List<bool> _is_selected_num_of_house = [false, false, false];
   bool _is_house_1_Selected = false;
   bool _is_house_2_Selected = false;
   bool _is_house_3_Selected = false;
@@ -32,6 +35,10 @@ class _Resume_HoldingTaxPageState extends State<Resume_HoldingTaxPage> {
     _stage = 1;
   }
 
+  void _clearText() {
+    _findingAddressTC.clear();
+  }
+
   @override
   void dispose() {
     // TODO: implement dispose
@@ -41,6 +48,8 @@ class _Resume_HoldingTaxPageState extends State<Resume_HoldingTaxPage> {
 
   @override
   Widget build(BuildContext context) {
+    int index_selected =
+        _is_selected_num_of_house.indexWhere((element) => element == true);
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -62,150 +71,431 @@ class _Resume_HoldingTaxPageState extends State<Resume_HoldingTaxPage> {
                     padding: const EdgeInsets.only(left: 30, right: 30),
                     child: Column(
                       children: [
+                        const SizedBox(
+                          height: 30,
+                        ),
+                        Selected_num_of_house(),
+                        const SizedBox(
+                          height: 30,
+                        ),
                         Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            MediumText(text: '주택수 선택'),
-                            Wrap(
-                              spacing: 10,
-                              runSpacing: 10,
+                            Label('주소'),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                ActionChip(
-                                    onPressed: () {
-                                      setState(() {
-                                        _is_house_1_Selected =
-                                            !_is_house_1_Selected;
-                                      });
-                                    },
-                                    labelPadding: EdgeInsets.all(5),
-                                    backgroundColor: _is_house_1_Selected
-                                        ? mainColor
-                                        : Colors.white,
-                                    elevation: 2,
-                                    avatar: CircleAvatar(
-                                      backgroundColor: _is_house_1_Selected
-                                          ? Colors.white60
-                                          : mainColor.withOpacity(.6),
-                                      child: Text((1).toString()),
-                                    ),
-                                    shadowColor: Colors.grey[100],
-                                    padding: EdgeInsets.all(6),
-                                    label: Text(
-                                      select_num_of_house[0],
-                                      style: TextStyle(
-                                          color: _is_house_1_Selected
-                                              ? Colors.white
-                                              : Colors.black,
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 17),
-                                    )),
-                                ActionChip(
-                                    onPressed: () {
-                                      setState(() {
-                                        _is_house_2_Selected =
-                                            !_is_house_2_Selected;
-                                      });
-                                    },
-                                    labelPadding: EdgeInsets.all(5),
-                                    backgroundColor: _is_house_2_Selected
-                                        ? mainColor
-                                        : Colors.white,
-                                    elevation: 2,
-                                    avatar: CircleAvatar(
-                                      backgroundColor: _is_house_2_Selected
-                                          ? Colors.white60
-                                          : mainColor.withOpacity(.6),
-                                      child: Text((2).toString()),
-                                    ),
-                                    shadowColor: Colors.grey[100],
-                                    padding: EdgeInsets.all(6),
-                                    label: Text(
-                                      select_num_of_house[1],
-                                      style: TextStyle(
-                                          color: _is_house_2_Selected
-                                              ? Colors.white
-                                              : Colors.black,
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 17),
-                                    )),
-                                ActionChip(
-                                    onPressed: () {
-                                      setState(() {
-                                        _is_house_3_Selected =
-                                            !_is_house_3_Selected;
-                                      });
-                                    },
-                                    labelPadding: EdgeInsets.all(5),
-                                    backgroundColor: _is_house_3_Selected
-                                        ? mainColor
-                                        : Colors.white,
-                                    elevation: 2,
-                                    avatar: CircleAvatar(
-                                      backgroundColor: _is_house_3_Selected
-                                          ? Colors.white60
-                                          : mainColor.withOpacity(.6),
-                                      child: Text('3+'),
-                                    ),
-                                    shadowColor: Colors.grey[100],
-                                    padding: EdgeInsets.all(6),
-                                    label: Text(
-                                      select_num_of_house[2],
-                                      style: TextStyle(
-                                          color: _is_house_3_Selected
-                                              ? Colors.white
-                                              : Colors.black,
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 17),
-                                    )),
+                                Text('주소1'),
+                                GestureDetector(
+                                  onTap: () async {
+                                    var a = await _findingAddressDialog(
+                                        _findingAddressTC);
+
+                                    setState(() {
+                                      sampleaddr != a;
+                                      samplecolor = Colors.black;
+                                      _stage = 2;
+                                    });
+                                  },
+                                  child: Container(
+                                      height: 40,
+                                      width: 550,
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: mainColor.withOpacity(.7),
+                                              blurRadius: 2.0,
+                                              spreadRadius: 1.0,
+                                            )
+                                          ],
+                                          borderRadius: const BorderRadius.all(
+                                              Radius.circular(10))),
+                                      margin: const EdgeInsets.fromLTRB(
+                                          0, 10, 0, 10),
+                                      padding: const EdgeInsets.fromLTRB(
+                                          10, 0, 0, 0),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            sampleaddr,
+                                            style: TextStyle(
+                                                fontSize: 17,
+                                                color: samplecolor),
+                                          ),
+                                        ],
+                                      )),
+                                ),
                               ],
                             ),
                           ],
                         ),
-                        Row(
-                          children: [
-                            MediumText(text: '주소'),
-                            GestureDetector(
-                              onTap: () async {
-                                var a = await _findingAddressDialog(
-                                    _findingAddressTC);
-
-                                setState(() {
-                                  sampleaddr != a;
-                                  samplecolor = Colors.black;
-                                  _stage = 2;
-                                });
-                              },
-                              child: Container(
-                                  height: 50,
-                                  decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: mainColor.withOpacity(.7),
-                                          blurRadius: 2.0,
-                                          spreadRadius: 1.0,
-                                        )
-                                      ],
-                                      borderRadius: const BorderRadius.all(
-                                          Radius.circular(10))),
-                                  margin:
-                                      const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                                  padding:
-                                      const EdgeInsets.fromLTRB(10, 0, 0, 0),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
+                        index_selected == 1
+                            ? Column(
+                                children: [
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Row(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Text(
-                                        sampleaddr,
-                                        style: TextStyle(
-                                            fontSize: 17, color: samplecolor),
+                                      SizedBox(
+                                        width: 120,
+                                      ),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text('주소2'),
+                                          GestureDetector(
+                                            onTap: () async {
+                                              var a =
+                                                  await _findingAddressDialog(
+                                                      _findingAddressTC);
+
+                                              setState(() {
+                                                sampleaddr != a;
+                                                samplecolor = Colors.black;
+                                                _stage = 2;
+                                              });
+                                            },
+                                            child: Container(
+                                                height: 40,
+                                                width: 550,
+                                                decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                        color: mainColor
+                                                            .withOpacity(.7),
+                                                        blurRadius: 2.0,
+                                                        spreadRadius: 1.0,
+                                                      )
+                                                    ],
+                                                    borderRadius:
+                                                        const BorderRadius.all(
+                                                            Radius
+                                                                .circular(10))),
+                                                margin: const EdgeInsets
+                                                    .fromLTRB(0, 10, 0, 10),
+                                                padding:
+                                                    const EdgeInsets.fromLTRB(
+                                                        10, 0, 0, 0),
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      sampleaddr,
+                                                      style: TextStyle(
+                                                          fontSize: 17,
+                                                          color: samplecolor),
+                                                    ),
+                                                  ],
+                                                )),
+                                          ),
+                                        ],
                                       ),
                                     ],
-                                  )),
-                            )
-                          ],
-                        )
+                                  ),
+                                ],
+                              )
+                            : SizedBox(),
+                        index_selected == 2
+                            ? Column(
+                                children: [
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const SizedBox(
+                                        width: 120,
+                                      ),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text('주소2'),
+                                          GestureDetector(
+                                            onTap: () async {
+                                              var a =
+                                                  await _findingAddressDialog(
+                                                      _findingAddressTC);
+
+                                              setState(() {
+                                                sampleaddr != a;
+                                                samplecolor = Colors.black;
+                                                _stage = 2;
+                                              });
+                                            },
+                                            child: Container(
+                                                height: 40,
+                                                width: 550,
+                                                decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                        color: mainColor
+                                                            .withOpacity(.7),
+                                                        blurRadius: 2.0,
+                                                        spreadRadius: 1.0,
+                                                      )
+                                                    ],
+                                                    borderRadius:
+                                                        const BorderRadius.all(
+                                                            Radius
+                                                                .circular(10))),
+                                                margin: const EdgeInsets
+                                                    .fromLTRB(0, 10, 0, 10),
+                                                padding:
+                                                    const EdgeInsets.fromLTRB(
+                                                        10, 0, 0, 0),
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      sampleaddr,
+                                                      style: TextStyle(
+                                                          fontSize: 17,
+                                                          color: samplecolor),
+                                                    ),
+                                                  ],
+                                                )),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const SizedBox(
+                                        width: 120,
+                                      ),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text('주소3'),
+                                          GestureDetector(
+                                            onTap: () async {
+                                              var a =
+                                                  await _findingAddressDialog(
+                                                      _findingAddressTC);
+
+                                              setState(() {
+                                                sampleaddr != a;
+                                                samplecolor = Colors.black;
+                                                _stage = 2;
+                                              });
+                                            },
+                                            child: Container(
+                                                height: 40,
+                                                width: 550,
+                                                decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                        color: mainColor
+                                                            .withOpacity(.7),
+                                                        blurRadius: 2.0,
+                                                        spreadRadius: 1.0,
+                                                      )
+                                                    ],
+                                                    borderRadius:
+                                                        const BorderRadius.all(
+                                                            Radius
+                                                                .circular(10))),
+                                                margin: const EdgeInsets
+                                                    .fromLTRB(0, 10, 0, 10),
+                                                padding:
+                                                    const EdgeInsets.fromLTRB(
+                                                        10, 0, 0, 0),
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      sampleaddr,
+                                                      style: TextStyle(
+                                                          fontSize: 17,
+                                                          color: samplecolor),
+                                                    ),
+                                                  ],
+                                                )),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const SizedBox(
+                                        width: 120,
+                                      ),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text('주소4'),
+                                          GestureDetector(
+                                            onTap: () async {
+                                              var a =
+                                                  await _findingAddressDialog(
+                                                      _findingAddressTC);
+
+                                              setState(() {
+                                                sampleaddr != a;
+                                                samplecolor = Colors.black;
+                                                _stage = 2;
+                                              });
+                                            },
+                                            child: Container(
+                                                height: 40,
+                                                width: 550,
+                                                decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                        color: mainColor
+                                                            .withOpacity(.7),
+                                                        blurRadius: 2.0,
+                                                        spreadRadius: 1.0,
+                                                      )
+                                                    ],
+                                                    borderRadius:
+                                                        const BorderRadius.all(
+                                                            Radius
+                                                                .circular(10))),
+                                                margin: const EdgeInsets
+                                                    .fromLTRB(0, 10, 0, 10),
+                                                padding:
+                                                    const EdgeInsets.fromLTRB(
+                                                        10, 0, 0, 0),
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      sampleaddr,
+                                                      style: TextStyle(
+                                                          fontSize: 17,
+                                                          color: samplecolor),
+                                                    ),
+                                                  ],
+                                                )),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const SizedBox(
+                                        width: 120,
+                                      ),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text('주소5'),
+                                          GestureDetector(
+                                            onTap: () async {
+                                              var a =
+                                                  await _findingAddressDialog(
+                                                      _findingAddressTC);
+
+                                              setState(() {
+                                                sampleaddr != a;
+                                                samplecolor = Colors.black;
+                                                _stage = 2;
+                                              });
+                                            },
+                                            child: Container(
+                                                height: 40,
+                                                width: 550,
+                                                decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                        color: mainColor
+                                                            .withOpacity(.7),
+                                                        blurRadius: 2.0,
+                                                        spreadRadius: 1.0,
+                                                      )
+                                                    ],
+                                                    borderRadius:
+                                                        const BorderRadius.all(
+                                                            Radius
+                                                                .circular(10))),
+                                                margin: const EdgeInsets
+                                                    .fromLTRB(0, 10, 0, 10),
+                                                padding:
+                                                    const EdgeInsets.fromLTRB(
+                                                        10, 0, 0, 0),
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      sampleaddr,
+                                                      style: TextStyle(
+                                                          fontSize: 17,
+                                                          color: samplecolor),
+                                                    ),
+                                                  ],
+                                                )),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              )
+                            : SizedBox(),
+                        const SizedBox(
+                          height: 30,
+                        ),
+                        index_selected >= 1
+                            ? Row(
+                                children: [LabelwithBadge_2('소유주')],
+                              )
+                            : Row(
+                                children: [LabelwithBadge_1('보유기간')],
+                              )
                       ],
                     ))
               ],
@@ -214,6 +504,182 @@ class _Resume_HoldingTaxPageState extends State<Resume_HoldingTaxPage> {
         ),
       ),
     );
+  }
+
+  SizedBox Label(String label) =>
+      SizedBox(width: 120, child: MediumText(text: label));
+
+  LabelwithBadge_1(String label) => Row(
+        children: [
+          SizedBox(
+            width: 90,
+            child: Badge(
+                alignment: Alignment.topLeft,
+                toAnimate: false,
+                padding: EdgeInsets.all(7),
+                badgeColor: mainColor,
+                badgeContent: Text(
+                  num_of_house[0],
+                  style: TextStyle(color: Colors.white),
+                ),
+                child: MediumText(text: label)),
+          ),
+          SizedBox(
+            width: 30,
+          )
+        ],
+      );
+
+  LabelwithBadge_2(String label) => Row(
+        children: [
+          SizedBox(
+            width: 80,
+            child: Badge(
+                alignment: Alignment.topLeft,
+                toAnimate: false,
+                padding: EdgeInsets.all(7),
+                badgeColor: mainColor,
+                badgeContent: Text(
+                  '2+',
+                  style: TextStyle(color: Colors.white),
+                ),
+                child: MediumText(text: label)),
+          ),
+          SizedBox(
+            width: 40,
+          )
+        ],
+      );
+
+  Row Selected_num_of_house() {
+    return Row(
+      children: [
+        Label('주택수 선택'),
+        Wrap(
+          spacing: 35,
+          runSpacing: 10,
+          children: [
+            buildActionChip3(),
+            buildActionChip2(),
+            buildActionChip(),
+          ],
+        ),
+      ],
+    );
+  }
+
+  ActionChip buildActionChip3() {
+    int count_selected =
+        _is_selected_num_of_house.where((element) => element == true).length;
+    int index_selected =
+        _is_selected_num_of_house.indexWhere((element) => element == true);
+    return ActionChip(
+        onPressed: () {
+          setState(() {
+            if (count_selected == 0) {
+              _is_selected_num_of_house[0] = !_is_selected_num_of_house[0];
+            } else if (count_selected == 1) {
+              if (index_selected == 0) {
+                _is_selected_num_of_house[0] = !_is_selected_num_of_house[0];
+              }
+            }
+          });
+        },
+        labelPadding: EdgeInsets.all(5),
+        backgroundColor:
+            _is_selected_num_of_house[0] ? mainColor : Colors.white,
+        elevation: 2,
+        avatar: CircleAvatar(
+          backgroundColor: _is_selected_num_of_house[0]
+              ? Colors.white60
+              : mainColor.withOpacity(.6),
+          child: Text((num_of_house[0])),
+        ),
+        shadowColor: Colors.grey[100],
+        padding: EdgeInsets.all(6),
+        label: Text(
+          select_num_of_house[0],
+          style: TextStyle(
+              color: _is_selected_num_of_house[0] ? Colors.white : Colors.black,
+              fontWeight: FontWeight.w500,
+              fontSize: 17),
+        ));
+  }
+
+  ActionChip buildActionChip2() {
+    int count_selected =
+        _is_selected_num_of_house.where((element) => element == true).length;
+    int index_selected =
+        _is_selected_num_of_house.indexWhere((element) => element == true);
+    return ActionChip(
+        onPressed: () {
+          setState(() {
+            if (count_selected == 0) {
+              _is_selected_num_of_house[1] = !_is_selected_num_of_house[1];
+            } else if (count_selected == 1) {
+              if (index_selected == 1) {
+                _is_selected_num_of_house[1] = !_is_selected_num_of_house[1];
+              }
+            }
+          });
+        },
+        labelPadding: EdgeInsets.all(5),
+        backgroundColor:
+            _is_selected_num_of_house[1] ? mainColor : Colors.white,
+        elevation: 2,
+        avatar: CircleAvatar(
+          backgroundColor: _is_selected_num_of_house[1]
+              ? Colors.white60
+              : mainColor.withOpacity(.6),
+          child: Text((num_of_house[1])),
+        ),
+        shadowColor: Colors.grey[100],
+        padding: EdgeInsets.all(6),
+        label: Text(
+          select_num_of_house[1],
+          style: TextStyle(
+              color: _is_selected_num_of_house[1] ? Colors.white : Colors.black,
+              fontWeight: FontWeight.w500,
+              fontSize: 17),
+        ));
+  }
+
+  ActionChip buildActionChip() {
+    int count_selected =
+        _is_selected_num_of_house.where((element) => element == true).length;
+    int index_selected =
+        _is_selected_num_of_house.indexWhere((element) => element == true);
+    return ActionChip(
+        onPressed: () {
+          setState(() {
+            if (count_selected == 0) {
+              _is_selected_num_of_house[2] = !_is_selected_num_of_house[2];
+            } else if (count_selected == 1) {
+              if (index_selected == 2) {
+                _is_selected_num_of_house[2] = !_is_selected_num_of_house[2];
+              }
+            }
+          });
+        },
+        labelPadding: EdgeInsets.all(5),
+        backgroundColor:
+            _is_selected_num_of_house[2] ? mainColor : Colors.white,
+        elevation: 2,
+        avatar: CircleAvatar(
+          backgroundColor: _is_selected_num_of_house[2]
+              ? Colors.white60
+              : mainColor.withOpacity(.6),
+          child: Text(num_of_house[2]),
+        ),
+        shadowColor: Colors.grey[100],
+        padding: EdgeInsets.all(6),
+        label: Text(
+          select_num_of_house[2],
+          style: TextStyle(
+              color: _is_selected_num_of_house[2] ? Colors.white : Colors.black,
+              fontWeight: FontWeight.w500,
+              fontSize: 17),
+        ));
   }
 
   OutlineInputBorder _outlineInputBorder() {
@@ -232,10 +698,11 @@ class _Resume_HoldingTaxPageState extends State<Resume_HoldingTaxPage> {
           return StatefulBuilder(builder: (context, setState) {
             return AlertDialog(
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(1),
+                  borderRadius: BorderRadius.circular(10),
                 ),
-                title: Text('주소검색'),
+                title: Text('주소 검색'),
                 content: Container(
+                  color: Colors.grey[60],
                   width: 600,
                   constraints: const BoxConstraints(
                     minHeight: 500,
@@ -243,42 +710,83 @@ class _Resume_HoldingTaxPageState extends State<Resume_HoldingTaxPage> {
                   ),
                   child: Column(
                     children: [
-                      Container(
-                        width: double.maxFinite,
-                        margin: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                        child: TextField(
-                            controller: tc,
-                            autofocus: true,
-                            onSubmitted: (value) {
-                              setState(() {
-                                _isSearchedAddress = true;
-                              });
-                            },
-                            cursorColor: Colors.black,
-                            textInputAction: TextInputAction.search,
-                            style: const TextStyle(fontSize: 17),
-                            decoration: InputDecoration(
-                                hintText: '반포대로',
-                                focusedBorder: _outlineInputBorder(),
-                                enabledBorder: _outlineInputBorder(),
-                                border: _outlineInputBorder(),
-                                suffixIcon: Padding(
-                                  padding: EdgeInsets.fromLTRB(0, 0, 10, 10),
-                                  child: IconButton(
-                                    icon: const Icon(Icons.search, size: 40),
-                                    color: Colors.black,
-                                    onPressed: () {
-                                      setState(() {
-                                        _isSearchedAddress = true;
-                                      });
-                                    },
-                                  ),
-                                ))),
+                      Row(
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: mainColor.withOpacity(.7),
+                                    blurRadius: 2.0,
+                                    spreadRadius: 1.0,
+                                  )
+                                ],
+                                borderRadius: const BorderRadius.all(
+                                    Radius.circular(10))),
+                            width: 540,
+                            margin: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                            child: TextField(
+                                controller: tc,
+                                autofocus: true,
+                                onSubmitted: (value) {
+                                  setState(() {
+                                    _isSearchedAddress = true;
+                                  });
+                                },
+                                cursorColor: mainColor,
+                                textInputAction: TextInputAction.search,
+                                style: const TextStyle(fontSize: 17),
+                                decoration: InputDecoration(
+                                    hintText: '반포대로',
+                                    focusedBorder: OutlineInputBorder(
+                                        borderSide:
+                                            BorderSide(color: mainColor),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(10))),
+                                    enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Colors.transparent),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(10))),
+                                    suffixIcon: Padding(
+                                      padding:
+                                          EdgeInsets.fromLTRB(0, 0, 15, 10),
+                                      child: IconButton(
+                                        icon:
+                                            const Icon(Icons.search, size: 35),
+                                        color: Colors.grey,
+                                        onPressed: () {
+                                          setState(() {
+                                            _isSearchedAddress = true;
+                                          });
+                                        },
+                                      ),
+                                    ))),
+                          ),
+                          TextButton(
+                              style: TextButton.styleFrom(
+                                  padding: EdgeInsets.zero,
+                                  alignment: Alignment.center),
+                              onPressed: _clearText,
+                              child: const Text(
+                                '취소',
+                                style: TextStyle(
+                                    fontSize: 17, color: Color(0xff80cfd5)),
+                              ))
+                        ],
                       ),
                       _isSearchedAddress
                           ? _addressList(tc.text)
-                          : const Center(
-                              child: Text('검색어를 입력해주세요'),
+                          : SizedBox(
+                              height: 100,
+                              child: const Center(
+                                child: Text(
+                                  '주소를 입력해주세요',
+                                  style: TextStyle(fontSize: 20),
+                                ),
+                              ),
                             )
                     ],
                   ),
