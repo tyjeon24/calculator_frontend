@@ -70,13 +70,11 @@ flutter:
     - assets/images/logo.png
     - assets/images/logo2.png
     - assets/capgain/firstFilter.CSV
-<<<<<<< HEAD
     - assets/images/
     - assets/images/psychology.png
     - assets/images/calculate.png
-=======
     - assets/capgain/AcquisitionDate.CSV
->>>>>>> main
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
