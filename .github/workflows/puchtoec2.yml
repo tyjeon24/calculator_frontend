@@ -1,7 +1,8 @@
 name: Push-to-EC2
 
-on: push
-
+on:
+  workflow_dispatch:
+  
 jobs:
   deploy:
     name: Push to EC2 Instance
