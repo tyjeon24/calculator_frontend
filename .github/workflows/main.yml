@@ -27,8 +27,7 @@ jobs: # 2. jobs는 실제로 하는 작업입니다.
           flutter-version: '3.0.5'
           channel: 'stable'
     
-    - run: flutter pub get # Get dependencies
-    - run: flutter test # Test project
+    - run: flutter pub get # Get dependencies - run: flutter test # Test project
     - run: flutter build web # Build release project
 
     - name: Upload production-ready build files
