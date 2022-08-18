@@ -33,6 +33,7 @@ jobs: # 2. jobs는 실제로 하는 작업입니다.
     - name: Upload production-ready build files
       uses: actions/upload-artifact@v2 # 빌드하면 나오는 .build/web 폴더를 업로드
       with:
+        name: production-files
         path: ./build/web 
   
   deploy:
