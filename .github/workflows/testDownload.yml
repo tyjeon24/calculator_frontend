@@ -13,5 +13,6 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
       with:
+        ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
         repository: tyjeon24/downloadMe
     - run: ls -al
