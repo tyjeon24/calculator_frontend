@@ -13,5 +13,5 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
       with:
-        repository: Flutter-Together/calculator_frontend
+        repository: tyjeon24/downloadMe
     - run: ls -al
